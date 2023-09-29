@@ -3,9 +3,9 @@
 
 > Schrap hierboven wat niet past
 
-- Student: VOORNAAM NAAM
-- Studentennummer: xxxxxxxxx
-- E-mailadres: <mailto:voornaam.naam@student.hogent.be>
+- Student: Peter Cypers
+- Studentennummer: 202185333
+- E-mailadres: <mailto:peter.cypers@student.hogent.be>
 
 ## Vereisten
 
