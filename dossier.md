@@ -5,10 +5,10 @@
 > Verwijder alle instructies (lijnen die starten met >).
 
 - [ ] Front-end Web Development
-  - <GITHUB_REPO_LINK_HIER>
+  - <https://github.com/Web-IV/2324-frontendweb-PeterCypers>
   - <LINK_ONLINE_VERSIE_HIER>
 - [ ] Web Services:
-  - <GITHUB_REPO_LINK_HIER>
+  - <https://github.com/Web-IV/2324-webservices-PeterCypers>
   - <LINK_ONLINE_VERSIE_HIER>
 
 **Logingegevens**
