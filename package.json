@@ -1,0 +1,36 @@
+{
+  "name": "2324-webservices-PeterCypers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Web-IV/2324-webservices-PeterCypers.git",
+  "author": "Peter Cypers <peter.cypers@student.hogent.be>",
+  "license": "MIT",
+  "dependencies": {
+    "config": "^3.3.9",
+    "koa": "^2.14.2",
+    "winston": "^3.11.0"
+  },
+  "scripts": {
+    "start": "env-cmd nodemon"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0",
+    "nodemon": "^3.0.1"
+  },
+  "nodemonConfig": {
+    "signal": "SIGTERM",
+    "ignore": [
+      "node_modules/*",
+      ".vscode/*"
+    ],
+    "delay": "80",
+    "watch": [
+      "config",
+      "src",
+      "index.js"
+    ],
+    "ext": "js,json",
+    "legacyWatch": true,
+    "exec": "node --inspect=0.0.0.0:9001 --trace-warnings index.js"
+  }
+}
