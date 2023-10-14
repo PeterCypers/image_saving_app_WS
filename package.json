@@ -1,13 +1,15 @@
 {
   "name": "2324-webservices-PeterCypers",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": "https://github.com/Web-IV/2324-webservices-PeterCypers.git",
   "author": "Peter Cypers <peter.cypers@student.hogent.be>",
   "license": "MIT",
   "dependencies": {
+    "@koa/router": "^11.0.2",
     "config": "^3.3.9",
     "koa": "^2.14.2",
+    "koa-bodyparser": "^4.4.1",
     "winston": "^3.11.0"
   },
   "scripts": {
@@ -26,11 +28,10 @@
     "delay": "80",
     "watch": [
       "config",
-      "src",
-      "index.js"
+      "src"
     ],
     "ext": "js,json",
     "legacyWatch": true,
-    "exec": "node --inspect=0.0.0.0:9001 --trace-warnings index.js"
+    "exec": "node --inspect=0.0.0.0:9001 --trace-warnings src/index.js"
   }
 }
