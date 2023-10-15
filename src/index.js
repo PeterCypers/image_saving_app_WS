@@ -37,6 +37,10 @@ app.use(bodyParser());
 
 
 //deze code vervangt (zie f50), maar je moet deze route nog aan je app toevoegen
+//om iets te tonen als er wordt gesurft naar de site zelf (localhost:9000)
+router.get("/", async(ctx) => {
+  ctx.body = "Hello World!!!";
+})
 router.get("/api/transactions", async (ctx) => {
     ctx.body=transactionService.getAll();
 })
