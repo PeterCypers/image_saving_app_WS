@@ -6,6 +6,7 @@
   "author": "Peter Cypers <peter.cypers@student.hogent.be>",
   "license": "MIT",
   "dependencies": {
+    "@koa/cors": "^4.0.0",
     "@koa/router": "^11.0.2",
     "config": "^3.3.9",
     "koa": "^2.14.2",
