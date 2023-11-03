@@ -9,8 +9,10 @@
     "@koa/cors": "^4.0.0",
     "@koa/router": "^11.0.2",
     "config": "^3.3.9",
+    "knex": "^3.0.1",
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.4.1",
+    "mysql2": "^3.6.3",
     "winston": "^3.11.0"
   },
   "scripts": {

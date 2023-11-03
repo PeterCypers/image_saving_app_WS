@@ -1,4 +1,5 @@
 // let ipv const -> je laat CRUD operaties toe
+//TODO: aanpassen op eigen database
 let PLACES = [
     {
       id: 1,
