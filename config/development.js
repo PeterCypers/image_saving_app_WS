@@ -11,9 +11,9 @@ module.exports = {
       client: 'mysql2',
       host: 'localhost',
       port: 3306,
-      name: 'budget',
+      name: '185333pc',
       username: 'root',
       password: '',
     },
 }
-//TODO: waarden aanpassen op mijn eigen database
+//TODO: waarden aanpassen op mijn eigen database -> controle of werkt

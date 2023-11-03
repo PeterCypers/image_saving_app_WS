@@ -50,11 +50,12 @@ function getKnex() {
     );
   return knexInstance;
 }
-//TODO: aanpassen op eigen database
+//TODO: aanpassen op eigen database -> controle of het werkt
 const tables = Object.freeze({
-  transaction: 'transactions',
-  user: 'users',
-  place: 'places',
+  person: 'person',
+  foto: 'foto',
+  fotoalbum: 'fotoalbum',
+  fotoalbum_foto: 'fotoalbum_foto'
 });
 
 module.exports = {
