@@ -9,19 +9,25 @@ const findAll = () => {
   return getKnex()(tables.foto).select().orderBy('dateUploaded', 'DESC');
 };
 
+const findAllByUserId = (id) => {
+  getLogger().info('Querying fotos by User Id', { id });
+  return getKnex()(tables.foto).where('userID', id);
+};
+
 /**
  * TODO:
  * Add method find by dateUploaded?
  */
 
 /**
- * Find a place with the given `id`.
- *
- * @param {number} id - Id of the place to find.
+ * Find a foto with the given `id`.
+ * @param {number} userID - Id of the user
+ * @param {number} fotoID - Id of the foto to find.
  */
-const findById = (id) => {
-  getLogger().info('Querying fotos by id', { id });
-  return getKnex()(tables.foto).where('fotoID', id).first();
+// TODO: is this ever necesary? to get a foto by userID then fotoID...
+const findById = (userID, fotoID) => {
+  getLogger().info('Querying fotos by foto Id', { fotoID });
+  return getKnex()(tables.foto).where('userID',userID).andWhere('fotoID', fotoID).first();
 };
 
 /**
@@ -77,4 +83,5 @@ module.exports = {
   findById,
   create,
   deleteById,
+  findAllByUserId,
 };

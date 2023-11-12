@@ -13,9 +13,12 @@ const createFoto = async (ctx) => {
   ctx.status = 201;
   ctx.body = place;
 };
+const getAllByUserId = async (ctx) => {
+  ctx.body = await fotoService.getAllByUserId(Number(ctx.params.id));
+}
 
 const getFotoById = async (ctx) => {
-  ctx.body = await fotoService.getById(Number(ctx.params.id));
+  ctx.body = await fotoService.getById(Number(ctx.params.userID),Number(ctx.params.fotoID));
 };
 
 const deleteFoto = async (ctx) => {
@@ -33,9 +36,10 @@ module.exports = (app) => {
     prefix: '/fotos',
   });
 
-  router.get('/', getAllFotos);
+  router.get('/', getAllFotos); //getAll zal niet meer gebeuren -> allByUserID
   router.post('/', createFoto);
-  router.get('/:id', getFotoById);
+  router.get('/:id', getAllByUserId)
+  router.get('/:userID/:fotoID', getFotoById); //might not get used -> curious if works
 //   router.put('/:id', updateFoto);
   router.delete('/:id', deleteFoto);
 

@@ -1,5 +1,6 @@
 const knex = require('knex');
 const { getLogger } = require('../core/logging');
+const { join } = require('path');
 
 const config = require('config');
 
@@ -24,20 +25,51 @@ async function initializeData() {
     connection: {
       host: DATABASE_HOST,
       port: DATABASE_PORT,
-      database: DATABASE_NAME,
+      // database: DATABASE_NAME, //(*)
       user: DATABASE_USERNAME,
       password: DATABASE_PASSWORD,
       insecureAuth: isDevelopment,
     },
+    // debug: isDevelopment,
+    migrations: { //put in comment along with below try-catch to work without migrations
+      tableName: 'knex_meta',
+      directory: join('src', 'data', 'migrations'),
+    },
+    seeds: {
+      directory: join('src', 'data', 'seeds'),
+    }
   };
 
   knexInstance = knex(knexOptions);
 
   try {
     await knexInstance.raw('SELECT 1+1 AS result');
+    // code toegevoegd voor migrations: //TODO: (*)dit kan een fout geven vanwege gelimiteerde permissies op de database, als dat zo is: zet bovenstaande code weer uit commentaar en dit in commentaar
+    await knexInstance.raw(`CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME}`);
+    await knexInstance.destroy();
+    knexOptions.connection.database=DATABASE_NAME;
+    knexInstance=knex(knexOptions);
+    await knexInstance.raw('SELECT 1+1 AS result');
+    // end code toegevoegd migrations
   } catch (error) {
     logger.error(error.message, { error });
     throw new Error('Could not initialize the data layer');
+  }
+  // migrations (creating database/tables)
+  try {
+    await knexInstance.migrate.latest(); //migrations try-catch in comment to work w/o migrations
+
+  } catch (error){
+    logger.error('Migrations failed', {error});
+    throw new Error('Migrations failed');
+  }
+  // seeding (adding testvalues to tables (mag alleen in development))
+  if (isDevelopment) {
+    try {
+      await knexInstance.seed.run();
+    } catch (error) {
+      logger.error("Seeding failed", {error});
+    }
   }
 
   return knexInstance;
@@ -50,9 +82,9 @@ function getKnex() {
     );
   return knexInstance;
 }
-//TODO: aanpassen op eigen database -> controle of het werkt
+
 const tables = Object.freeze({
-  person: 'person',
+  users: 'users',
   foto: 'foto',
   fotoalbum: 'fotoalbum',
   fotoalbum_foto: 'fotoalbum_foto'

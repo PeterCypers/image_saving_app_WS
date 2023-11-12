@@ -10,22 +10,33 @@ const getAll = async () => {
     count: items.length,
   };
 };
-
-const getById = async (id) => {
-  const foto = await fotoRepository.findById(id);
-
-  if (!foto) {
-    throw Error(`No foto with id ${id} exists`, { id });
-  }
-
-  return foto;
+// nieuwe functie nodig om alle fotos voor 1 gebruiker terug te geven:
+const getAllByUserId = async (userID) => {
+  const items = await fotoRepository.findAllByUserId(userID);
+  return {
+    items,
+    count: items.length,
+  };
 };
 
+const getById = async (userID, fotoID) => {
+  const items = await fotoRepository.findById(userID, fotoID);
+
+  if (!items) {
+    throw Error(`No foto with id ${id} exists`, { fotoID });
+  }
+
+  return {
+    items,
+    count: items.length,
+  };
+};
+// TODO: rework to getting 2 parameters
 const create = async ({ location, dateUploaded, userID }) => {
   const id = await fotoRepository.create({ location, dateUploaded, userID });
   return getById(id);
 };
-
+// TODO: rework to getting 2 parameters
 const deleteById = async (id) => {
   const deleted = await fotoRepository.deleteById(id);
 
@@ -39,4 +50,5 @@ module.exports = {
   getById,
   create,
   deleteById,
+  getAllByUserId,
 };
