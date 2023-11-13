@@ -20,6 +20,16 @@ const findAllByUserId = (id) => {
  */
 
 /**
+ * Calculate the total number of transactions.
+ *
+ */
+const findCount = async () => {
+  const [count] = await getKnex()(tables.foto).count();
+
+  return count['count(*)'];
+};
+
+/**
  * Find a foto with the given `id`.
  * @param {number} userID - Id of the user
  * @param {number} fotoID - Id of the foto to find.
@@ -81,6 +91,7 @@ const deleteById = async (id) => {
 module.exports = {
   findAll,
   findById,
+  findCount,
   create,
   deleteById,
   findAllByUserId,

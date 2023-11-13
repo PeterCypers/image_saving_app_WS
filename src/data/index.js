@@ -44,7 +44,7 @@ async function initializeData() {
 
   try {
     await knexInstance.raw('SELECT 1+1 AS result');
-    // code toegevoegd voor migrations: //TODO: (*)dit kan een fout geven vanwege gelimiteerde permissies op de database, als dat zo is: zet bovenstaande code weer uit commentaar en dit in commentaar
+    // code toegevoegd voor migrations: 
     await knexInstance.raw(`CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME}`);
     await knexInstance.destroy();
     knexOptions.connection.database=DATABASE_NAME;
@@ -63,8 +63,12 @@ async function initializeData() {
     logger.error('Migrations failed', {error});
     throw new Error('Migrations failed');
   }
-  // seeding (adding testvalues to tables (mag alleen in development))
-  if (isDevelopment) {
+  // seeding (adding testvalues to tables (only allowed in development))
+  //TODO: als tip gekregen in front-end, is het goed uitgewerkt zo?
+  const [count] = await knexInstance(tables.users).count();
+  logger.silly(`Users in database: ${count['count(*)']}`);
+  if (isDevelopment && count['count(*)'] == 0) {
+    logger.silly("Empty tables: seeding")
     try {
       await knexInstance.seed.run();
     } catch (error) {

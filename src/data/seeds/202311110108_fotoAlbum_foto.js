@@ -2,7 +2,7 @@ const { tables } = require('..');
 
 module.exports = {
     seed: async (knex) => {
-        await knex(tables.fotoalbum_foto).delete();
+        // await knex(tables.fotoalbum_foto).delete();
         // (fotoID, albumID)
         await knex(tables.fotoalbum_foto).insert([
             { fotoID: 1, albumID: 1 },
