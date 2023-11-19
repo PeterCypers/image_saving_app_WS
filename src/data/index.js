@@ -64,11 +64,7 @@ async function initializeData() {
     throw new Error('Migrations failed');
   }
   // seeding (adding testvalues to tables (only allowed in development))
-  //TODO: als tip gekregen in front-end, is het goed uitgewerkt zo?
-  const [count] = await knexInstance(tables.users).count();
-  logger.silly(`Users in database: ${count['count(*)']}`);
-  if (isDevelopment && count['count(*)'] == 0) {
-    logger.silly("Empty tables: seeding")
+  if (isDevelopment) {
     try {
       await knexInstance.seed.run();
     } catch (error) {

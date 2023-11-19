@@ -1,17 +1,19 @@
 const Router = require('@koa/router');
 const fotoService = require('../service/foto');
-
+const { getLogger } = require('../core/logging'); //testing
 const getAllFotos = async (ctx) => {
   ctx.body = await fotoService.getAll();
 };
-//TODO: hoe ziet de request eruit aan de frontend -> gekozen component structuur?
+//TODO: FormData & filesize problem
 const createFoto = async (ctx) => {
-  const foto = await fotoService.create({
-    ...ctx.request.body,
-    rating: Date(ctx.request.body.dateUploaded),
-  });
-  ctx.status = 201;
-  ctx.body = place;
+  const logger = getLogger();
+  logger.info(JSON.stringify(ctx.request.body));
+  // const foto = await fotoService.create({
+  //   ...ctx.request.body,
+  //   rating: Date(ctx.request.body.dateUploaded),
+  // });
+  // ctx.status = 201;
+  // ctx.body = place;
 };
 const getAllByUserId = async (ctx) => {
   ctx.body = await fotoService.getAllByUserId(Number(ctx.params.id));
