@@ -7,7 +7,7 @@ const getAllFotos = async (ctx) => {
 //TODO: FormData & filesize problem
 const createFoto = async (ctx) => {
   const logger = getLogger();
-  logger.info(JSON.stringify(ctx.request.body));
+  logger.error(JSON.stringify(ctx.request.body));
   // const foto = await fotoService.create({
   //   ...ctx.request.body,
   //   rating: Date(ctx.request.body.dateUploaded),
@@ -28,6 +28,12 @@ const deleteFoto = async (ctx) => {
   ctx.status = 204;
 };
 
+const saveFoto = async (ctx) => {
+  const logger = getLogger();
+  logger.error(JSON.stringify(ctx.request.header));
+  // logger.silly(ctx.request.header);
+}
+
 /**
  * Install foto routes in the given router.
  *
@@ -40,6 +46,7 @@ module.exports = (app) => {
 
   router.get('/', getAllFotos); //getAll zal niet meer gebeuren -> allByUserID
   router.post('/', createFoto);
+  router.post('/save/', saveFoto);
   router.get('/:id', getAllByUserId)
   router.get('/:userID/:fotoID', getFotoById); //might not get used -> curious if works
 //   router.put('/:id', updateFoto);
