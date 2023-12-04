@@ -83,6 +83,13 @@ function getKnex() {
   return knexInstance;
 }
 
+async function shutdownData() {
+  getLogger().info("shutting down database connection");
+  await knexInstance.destroy();
+  knexInstance = null;
+  getLogger().info("database connection closed");
+}
+
 const tables = Object.freeze({
   users: 'users',
   foto: 'foto',
@@ -94,4 +101,5 @@ module.exports = {
   initializeData,
   getKnex,
   tables,
+  shutdownData,
 };
