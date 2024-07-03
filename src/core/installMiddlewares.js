@@ -2,6 +2,12 @@ const config = require('config');
 const bodyParser = require('koa-bodyparser'); // middleware
 const koaCors = require('@koa/cors');
 
+/** werken met multipart forms & file uploads:
+ * https://www.npmjs.com/package/koa-body
+ * geen default-import, moet tussen {}
+*/
+const { koaBody } = require('koa-body');
+
 const CORS_ORIGINS = config.get('cors.origins'); //@koa/cors
 const CORS_MAX_AGE = config.get('cors.maxAge'); //@koa/cors
 
@@ -23,5 +29,7 @@ module.exports = function installMiddleware(app) {
 
   // altijd eerst bodyParser meegeven aan de Koa app
   app.use(bodyParser());
+
+  app.use(koaBody({ multipart: true }));
 
 }
