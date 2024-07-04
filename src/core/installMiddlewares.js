@@ -32,4 +32,6 @@ module.exports = function installMiddleware(app) {
 
   app.use(koaBody({ multipart: true }));
 
+  //TODO: koa-static
+
 }

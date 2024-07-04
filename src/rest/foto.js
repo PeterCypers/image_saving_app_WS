@@ -95,7 +95,15 @@ const saveFoto = async (ctx) => {
     // Move the file to the target path
     fs.renameSync(tempFilePath, targetPath);
 
-    // Log the details or save metadata to the database
+    // TODO: handle using the service properly -> try to save a new foto in DB
+    // Save metadata to the database
+    const foto = await Foto.create({
+      location: targetPath,
+      dateUploaded: dateUploaded || new Date(),
+      userID: userID
+    });
+
+    // Log the details
     logger.info(`File uploaded successfully: ${originalName}`);
     logger.info(`User ID: ${userID}`);
     logger.info(`Date Uploaded: ${dateUploaded}`);
