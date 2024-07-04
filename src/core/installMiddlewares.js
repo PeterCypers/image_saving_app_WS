@@ -2,6 +2,12 @@ const config = require('config');
 const bodyParser = require('koa-bodyparser'); // middleware
 const koaCors = require('@koa/cors');
 
+/**
+ * nodig voor static-fileserving
+ */
+const path = require('path');
+const serve = require('koa-static');
+
 /** werken met multipart forms & file uploads:
  * https://www.npmjs.com/package/koa-body
  * geen default-import, moet tussen {}
@@ -32,6 +38,9 @@ module.exports = function installMiddleware(app) {
 
   app.use(koaBody({ multipart: true }));
 
-  //TODO: koa-static
+  //koa-static needs to know which folder contains the files that are public
+  //TODO: vraag: security probleem? de files zijn nu publiek toegankelijk, hoe kan dit opgelost worden
+  const publicDir = path.join(__dirname, '../../public');
+  app.use(serve(path.join(publicDir, 'uploads')));
 
 }
