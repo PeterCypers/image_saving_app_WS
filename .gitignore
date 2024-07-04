@@ -124,3 +124,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Ignore all contents of the 'public' directory
+/public/*
