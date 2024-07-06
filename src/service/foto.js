@@ -31,11 +31,17 @@ const getById = async (userID, fotoID) => {
     count: items.length,
   };
 };
-// TODO: rework to getting 2 parameters
+//TODO: check if works
 const create = async ({ location, dateUploaded, userID }) => {
-  const id = await fotoRepository.create({ location, dateUploaded, userID });
-  return getById(id);
+  /*const id =*/ //await fotoRepository.create({ location, dateUploaded, userID });
+  //return getById(id);
+  const existingFoto = await fotoRepository.findByLocation(location);
+  if (existingFoto) {
+    return existingFoto; // Return the existing entry if it already exists
+  }
+  await fotoRepository.create({ location, dateUploaded, userID });
 };
+
 // TODO: rework to getting 2 parameters
 const deleteById = async (id) => {
   const deleted = await fotoRepository.deleteById(id);
