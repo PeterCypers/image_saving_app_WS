@@ -21,17 +21,7 @@ const path = require('path');
 const getAllFotos = async (ctx) => {
   ctx.body = await fotoService.getAll();
 };
-//TODO: FormData & filesize problem
-const createFoto = async (ctx) => {
-  const logger = getLogger();
-  logger.error(JSON.stringify(ctx.request.body));
-  // const foto = await fotoService.create({
-  //   ...ctx.request.body,
-  //   rating: Date(ctx.request.body.dateUploaded),
-  // });
-  // ctx.status = 201;
-  // ctx.body = place;
-};
+
 const getAllByUserId = async (ctx) => {
   ctx.body = await fotoService.getAllByUserId(Number(ctx.params.id));
 }
@@ -53,11 +43,11 @@ const saveFoto = async (ctx) => {
   // Access the uploaded file and other form data
   const { userID, dateUploaded } = ctx.request.body;
   const fotoFile = ctx.request.files.fotoFile; // Access the uploaded file
-
   //Debugging
   /*
   logger.info(JSON.stringify(ctx.request.body));
   logger.info(`${fotoFile}`);
+  logger.info(`${dateUploaded} ${typeof dateUploaded}`);
   logger.info(`${typeof fotoFile}`);
   logger.info(`${Object.keys(fotoFile)}`);
   logger.info(`${fotoFile.originalFilename}`);
@@ -95,13 +85,29 @@ const saveFoto = async (ctx) => {
     // Move the file to the target path
     fs.renameSync(tempFilePath, targetPath);
 
+    // getting the difference between 2 paths:(ter info)
+    // const relativePath = path.relative(path.join(__dirname, '..', '..', 'public'), targetPath);
+
+    // Convert absolute path to URL-like path
+    const relativePath = targetPath.replace(uploadsDirectory, '').replace(/\\/g, '/');
+
+    // Construct the complete URL
+    const fileUrl = `http://localhost:9000${relativePath}`;
+
     // TODO: handle using the service properly -> try to save a new foto in DB
     // Save metadata to the database
-    // const foto = await Foto.create({
-    //   location: targetPath,
-    //   dateUploaded: dateUploaded || new Date(),
-    //   userID: userID
-    // });
+    const existingFoto = await fotoService.create({
+      location: fileUrl,
+      dateUploaded: formatIsoString(dateUploaded) || formatIsoString(new Date().toISOString()),
+      userID: userID
+    });
+
+    if (existingFoto) {
+      logger.info(`Duplicate file detected: ${originalName}`);
+      ctx.status = 409; // Conflict status code
+      ctx.body = { message: 'File already exists' };
+      return;
+    }
 
     // Log the details
     logger.info(`File uploaded successfully: ${originalName}`);
@@ -117,6 +123,20 @@ const saveFoto = async (ctx) => {
   }
 }
 
+function formatIsoString(isoString) {
+  let date = new Date(isoString);
+
+  // Format the date and time
+  let formattedDate = date.getFullYear() + '-' +
+                      ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                      ('0' + date.getDate()).slice(-2) + ' ' +
+                      ('0' + date.getHours()).slice(-2) + ':' +
+                      ('0' + date.getMinutes()).slice(-2) + ':' +
+                      ('0' + date.getSeconds()).slice(-2);
+
+  return formattedDate;
+}
+
 /**
  * Install foto routes in the given router.
  *
@@ -128,7 +148,6 @@ module.exports = (app) => {
   });
 
   router.get('/', getAllFotos); //getAll zal niet meer gebeuren -> allByUserID
-  router.post('/', createFoto);
   router.post('/save/', saveFoto);
   router.get('/:id', getAllByUserId)
   router.get('/:userID/:fotoID', getFotoById); //might not get used -> curious if works

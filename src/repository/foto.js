@@ -40,6 +40,16 @@ const findById = (userID, fotoID) => {
   return getKnex()(tables.foto).where('userID',userID).andWhere('fotoID', fotoID).first();
 };
 
+const findByLocation = async (location) => {
+  try {
+    const result = await getKnex()(tables.foto).where({ location }).first();
+    return result;
+  } catch (error) {
+    getLogger().error('Error in findByLocation', { error });
+    throw error;
+  }
+};
+
 /**
  * Create a new foto with the given `location` and `dateUploaded` and `userID`.
  *
@@ -53,13 +63,13 @@ const findById = (userID, fotoID) => {
  */
 const create = async ({ location, dateUploaded, userID }) => {
   try {
-    const [fotoID] = await getKnex()(tables.foto).insert({
+    /*const [fotoID] = */await getKnex()(tables.foto).insert({
       location,
       dateUploaded,
       userID,
     });
 
-    return fotoID;
+    //return fotoID;
   } catch (error) {
     getLogger().error('Error in create', {
       error,
@@ -95,4 +105,5 @@ module.exports = {
   create,
   deleteById,
   findAllByUserId,
+  findByLocation,
 };
