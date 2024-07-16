@@ -4,7 +4,7 @@ const koaCors = require('@koa/cors');
 const emoji = require('node-emoji');
 const { getLogger } = require('./logging');
 const ServiceError = require('./serviceError');
-//const koaHelmet = require('koa-helmet');
+const koaHelmet = require('koa-helmet');
 
 /**
  * nodig voor static-fileserving
@@ -38,6 +38,9 @@ const CORS_MAX_AGE = config.get('cors.maxAge'); //@koa/cors
  * @param {*} app 
  */
 module.exports = function installMiddleware(app) {
+
+  // 0. CyberSec WS-H6
+  app.use(koaHelmet());
 
   // 1. Cors
   app.use(
@@ -96,9 +99,6 @@ module.exports = function installMiddleware(app) {
   app.use(serve(path.join(publicDir, 'uploads')));
 
   // 4. error handling
-
-  // TODO: koaHelmet
-
   app.use(async (ctx, next) => {
     try {
       await next();
