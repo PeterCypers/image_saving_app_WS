@@ -36,7 +36,7 @@ module.exports = async function createServer() {
     },
     start() {
         return new Promise((resolve) => {
-            app.listen(9000, () => {getLogger().info(`server is running at http://localhost:9000`)});
+            app.listen(9000, () => {getLogger().info(`🚀 server is running at http://localhost:9000`)});
             resolve();
         })
     },
