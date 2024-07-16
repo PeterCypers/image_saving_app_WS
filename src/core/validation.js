@@ -1,4 +1,4 @@
-const Joi = require('joi'); // 👈 1
+const Joi = require('joi');
 
 const JOI_OPTIONS = {
   abortEarly: true,

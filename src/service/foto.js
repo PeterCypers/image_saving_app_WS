@@ -31,7 +31,7 @@ const getById = async (userID, fotoID) => {
     count: items.length,
   };
 };
-//TODO: check if works
+
 const create = async ({ location, dateUploaded, userID }) => {
   /*const id =*/ //await fotoRepository.create({ location, dateUploaded, userID });
   //return getById(id);
