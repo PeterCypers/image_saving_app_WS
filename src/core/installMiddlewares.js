@@ -99,9 +99,6 @@ module.exports = function installMiddleware(app) {
   app.use(serve(path.join(publicDir, 'uploads')));
 
   // 4. error handling
-
-  // TODO: koaHelmet
-
   app.use(async (ctx, next) => {
     try {
       await next();
