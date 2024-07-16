@@ -1,4 +1,6 @@
 const Router = require('@koa/router');
+const Joi = require('joi');
+const validate = require('../core/validation');
 const fotoService = require('../service/foto');
 const { getLogger } = require('../core/logging'); //testing
 
@@ -17,14 +19,20 @@ const fs = require('fs');
 const path = require('path');
 
 
-
+// no longer to be used, or possibly used by admin
 const getAllFotos = async (ctx) => {
   ctx.body = await fotoService.getAll();
 };
+getAllFotos.validationScheme = null;
 
 const getAllByUserId = async (ctx) => {
   ctx.body = await fotoService.getAllByUserId(Number(ctx.params.id));
 }
+getAllByUserId.validationScheme = {
+  params: Joi.object({
+    id: Joi.number().integer().positive(),
+  }),
+};
 
 const getFotoById = async (ctx) => {
   ctx.body = await fotoService.getById(Number(ctx.params.userID),Number(ctx.params.fotoID));
@@ -94,7 +102,6 @@ const saveFoto = async (ctx) => {
     // Construct the complete URL
     const fileUrl = `http://localhost:9000${relativePath}`;
 
-    // TODO: handle using the service properly -> try to save a new foto in DB
     // Save metadata to the database
     const existingFoto = await fotoService.create({
       location: fileUrl,
@@ -147,9 +154,19 @@ module.exports = (app) => {
     prefix: '/fotos',
   });
 
-  router.get('/', getAllFotos); //getAll zal niet meer gebeuren -> allByUserID
+  //getAll zal niet meer gebeuren -> allByUserID
+  router.get(
+    '/',
+    validate(getAllFotos.validationScheme),
+    getAllFotos
+  );
+  // validate handled in front-end component, if bad file-type -> request won't get sent
   router.post('/save/', saveFoto);
-  router.get('/:id', getAllByUserId)
+  router.get(
+    '/:id',
+    validate(getAllByUserId.validationScheme),
+    getAllByUserId
+  );
   router.get('/:userID/:fotoID', getFotoById); //might not get used -> curious if works
 //   router.put('/:id', updateFoto);
   router.delete('/:id', deleteFoto);
