@@ -39,8 +39,8 @@ const CORS_MAX_AGE = config.get('cors.maxAge'); //@koa/cors
  */
 module.exports = function installMiddleware(app) {
 
-  // 0. CyberSec WS-H6
-  app.use(koaHelmet());
+  // 0. CyberSec WS-H6 TODO: if possible figure out how to serve files statically and include most security headers
+  // app.use(koaHelmet());
 
   // 1. Cors
   app.use(
