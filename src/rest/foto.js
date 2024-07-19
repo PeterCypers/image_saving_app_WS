@@ -28,6 +28,7 @@ getAllFotos.validationScheme = null;
 const getAllByUserId = async (ctx) => {
   ctx.body = await fotoService.getAllByUserId(Number(ctx.params.id));
 }
+//waarom Joi.object errond?
 getAllByUserId.validationScheme = {
   params: Joi.object({
     id: Joi.number().integer().positive(),

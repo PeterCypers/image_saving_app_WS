@@ -20,7 +20,7 @@ const findAllByUserId = (id) => {
  */
 
 /**
- * Calculate the total number of transactions.
+ * Calculate the total number of fotos.
  *
  */
 const findCount = async () => {
