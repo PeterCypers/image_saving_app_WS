@@ -19,6 +19,8 @@ module.exports = {
 
         // add new data to table:
         // (firstName, lastName, passwordHash) 
+        // TODO: possibly change firstname & lastname -> to either include username or replace both with username
+        // then also testdata will need to change
         await knex(tables.users).insert([
             { userID: 1, firstName: 'David', lastName: 'Bowie', passwordHash: 'B0B71BC6697DE5D6D7287436459C1CD7FB50150B20B955CC1C37C9466D06858F' },
             { userID: 2, firstName: 'Bruce', lastName: 'Dickinson', passwordHash: 'E9299A4A9BCF81DBDA11BDB42DE880D95EFE0B9A9C43B6F56C313EB7A0FD0CF5' },

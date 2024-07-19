@@ -43,7 +43,7 @@ const deleteFoto = async (ctx) => {
   ctx.status = 204;
 };
 
-// TODO: move to service layer
+
 // file Object keys: _events,_eventsCount,_maxListeners,lastModifiedDate,filepath,newFilename,originalFilename,mimetype,hashAlgorithm,size,_writeStream,hash
 const saveFoto = async (ctx) => {
   const logger = getLogger();
@@ -77,7 +77,7 @@ const saveFoto = async (ctx) => {
     // Get the temporary file path and original file name
     const { filepath: tempFilePath, originalFilename: originalName } = fotoFile;
 
-    // Define the target path where the file will be saved (adjust path as needed)
+    // Define the target path where the file will be saved
     const uploadsDirectory = path.join(__dirname, '..', '..', 'public', 'uploads');
 
     const userDirectory = path.join(uploadsDirectory, 'user' + userID.toString());
@@ -99,6 +99,7 @@ const saveFoto = async (ctx) => {
     // Convert absolute path to URL-like path
     const relativePath = targetPath.replace(uploadsDirectory, '').replace(/\\/g, '/');
 
+    //TODO: might change when website goes online
     // Construct the complete URL
     const fileUrl = `http://localhost:9000${relativePath}`;
 
