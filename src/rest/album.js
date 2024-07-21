@@ -21,7 +21,8 @@ getAllByUserId.validationScheme = {
   }),
 };
 
-//needed?
+//zal nooit gebruikt worden, enkel intern in servicelaag(create album)
+//ook probleem met 2 parameters in get by id
 const getAlbumById = async (ctx) => {
   ctx.body = await albumService.getById(Number(ctx.params.userID),Number(ctx.params.albumID));
 }
@@ -38,10 +39,12 @@ const deleteAlbum = async (ctx) => {
 //datum moet niet meegegeven worden aan front-end, zal hier gemaakt worden
 //DB format: (albumID: 1 -> existn't), albumName: 'NotEmptyUniqueString', creationDate: '2023-10-21 00:00:00', userID: 1
 const createAlbum = async (ctx) => {
+  const logger = getLogger();
+  logger.error(JSON.stringify(ctx.request.body));
   const newAlbum = await albumService.create({
-    ...ctx.request.body,
-    creationDate: formatIsoString(dateUploaded) || formatIsoString(new Date().toISOString()),
-    userID: Number(ctx.params.userID),
+    ...ctx.request.body, //er schiet enkel nog <albumName> over in de body... maar die mag als string blijven
+    creationDate: formatIsoString(new Date().toISOString()),
+    userID: Number(ctx.request.body.userID),
   });
 
   ctx.status = 201;
@@ -56,7 +59,13 @@ createAlbum.validationScheme = {
 
 // TODO:
 //DB format: albumID: 1 , albumName: 'NotEmptyUniqueString', creationDate: '2023-10-21 00:00:00', userID: 1
-const updateAlbum = async (ctx) => {}
+const updateAlbum = async (ctx) => {
+  /*const updatedAlbum =*/ await albumService.update(Number(ctx.params.id), {
+    ...ctx.request.body,
+    creationDate: formatIsoString(new Date().toISOString()),
+    });
+    ctx.status = 204;
+}
 
 
 function formatIsoString(isoString) {
@@ -84,9 +93,10 @@ module.exports = (app) => {
   });
 
   router.get('/', getAllAlbums); //wordt niet gebruikt validate(.validationScheme)
+  router.post('/', validate(createAlbum.validationScheme), createAlbum);
   router.get('/:id', validate(getAllByUserId.validationScheme), getAllByUserId);
-  router.get('/:userID/:albumID', getAlbumById); //might not be used
-  router.post('/:userID', validate(createAlbum.validationScheme), createAlbum);
+  router.get('/:userID/:albumID', getAlbumById); //zal nooit gebruikt worden
+  
   router.put('/:id', updateAlbum);
 
   app.use(router.routes()).use(router.allowedMethods());

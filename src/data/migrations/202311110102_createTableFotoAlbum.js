@@ -6,6 +6,9 @@ module.exports = {
             table.string('albumName', 255);
             table.dateTime('creationDate');
             table.integer('userID').unsigned().notNullable();
+            //album naam moet uniek zijn:
+            table.unique('albumName', 'idx_album_name_unique');
+
             table.foreign('userID', 'FK_FotoAlbum_Users')
             .references(`${tables.users}.userID`)
             .onDelete('CASCADE');

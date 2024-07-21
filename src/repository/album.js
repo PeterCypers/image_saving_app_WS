@@ -7,8 +7,10 @@ const findAll = () => {
   return getKnex()(tables.fotoalbum).select().orderBy('dateUploaded', 'DESC');
 };
 
-// zal nooit gebruikt worden?
-const findById = () => {};
+const findById = (id) => {
+  getLogger().info('Querying album by id', { id });
+  return getKnex()(tables.fotoalbum).where('albumID', id).first();
+};
 
 const findAllByUserId = (id) => {
   getLogger().info('Querying albums by User Id', { id });
@@ -29,13 +31,13 @@ const findAllByUserId = (id) => {
  */
 const create = async ({ albumName, creationDate, userID }) => {
   try {
-    /*const [albumID] = */await getKnex()(tables.fotoalbum).insert({
+    const [albumID] = await getKnex()(tables.fotoalbum).insert({
       albumName,
       creationDate,
       userID,
     });
 
-    //return albumID;
+    return albumID;
   } catch (error) {
     getLogger().error('Error in create', {
       error,
