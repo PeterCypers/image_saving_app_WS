@@ -1,5 +1,5 @@
 const config = require('config');
-const bodyParser = require('koa-bodyparser'); // middleware
+// const bodyParser = require('koa-bodyparser'); -> [ conflict with koa-body ! ]
 const koaCors = require('@koa/cors');
 const emoji = require('node-emoji');
 const { getLogger } = require('./logging');
@@ -88,7 +88,8 @@ module.exports = function installMiddleware(app) {
   });
 
   // 3. bodyparser
-  app.use(bodyParser());
+  // app.use(bodyParser()); -> [ conflict with koa-body ! ]
+  // results in error: InternalServerError: stream is not readable...(see screenshot)
 
   // 3.5 custom body parsing
   app.use(koaBody({ multipart: true }));

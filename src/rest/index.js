@@ -1,9 +1,8 @@
 const Router = require('@koa/router');
 const installHealthRouter = require('./health');
-// const installTransactionRouter = require('./transaction');
-// const installPlaceRouter = require('./place');
 const installFotoRouter = require('./foto');
-//TODO: gebruik routers naar eigen tables
+const installAlbumRouter = require('./album');
+
 /**
  * Install all routes in the given Koa application.
  *
@@ -16,8 +15,8 @@ module.exports = (app) => {
 
   installHealthRouter(router);
   installFotoRouter(router);
-  // installTransactionRouter(router);
-  // installPlaceRouter(router);
+  installAlbumRouter(router);
+  // ... possible aditional routes
 
   app.use(router.routes())
      .use(router.allowedMethods());

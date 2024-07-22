@@ -1,5 +1,18 @@
 const { tables } = require('..');
 
+/** chrome console script:
+
+let s = "";
+
+for (let i = 1; i < 25; i++) {
+    s += `            { fotoID: ${i}, albumID: 1 },
+`;   
+}
+
+setTimeout(async()=>console.log(
+     await window.navigator.clipboard.writeText(s)), 3000);
+
+ */
 module.exports = {
     seed: async (knex) => {
         // await knex(tables.fotoalbum_foto).delete();

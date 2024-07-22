@@ -17,6 +17,12 @@ module.exports = {
         await knex(tables.foto).delete();
         await knex(tables.users).delete();
 
+        // Reset auto-increment values
+        await knex.raw('ALTER TABLE ?? AUTO_INCREMENT = 1', [tables.fotoalbum_foto]);
+        await knex.raw('ALTER TABLE ?? AUTO_INCREMENT = 1', [tables.fotoalbum]);
+        await knex.raw('ALTER TABLE ?? AUTO_INCREMENT = 1', [tables.foto]);
+        await knex.raw('ALTER TABLE ?? AUTO_INCREMENT = 1', [tables.users]);
+
         // add new data to table:
         // (firstName, lastName, passwordHash) 
         // TODO: possibly change firstname & lastname -> to either include username or replace both with username
