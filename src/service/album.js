@@ -41,37 +41,26 @@ const create = async ({ albumName, creationDate, userID }) => {
   } catch (error) {
     throw handleDBError(error);
   }
-
-  // const existingAlbum = await fotoRepository.findByLocation(location); // only works for fotos, not albums
-  // if (existingAlbum) {
-  //   return existingAlbum; // Return the existing entry if it already exists
-  // }
-  // await albumRepository.create({ albumName, creationDate, userID });
 };
 
-const create2 = async ({ amount, date, placeId, userId }) => {
-  const existingPlace = await placeService.getById(placeId);
-
-  if (!existingPlace) {
-    throw ServiceError.notFound(`There is no place with id ${id}.`, { id });
-  }
-
+const createAndAddFoto = async ({ albumName, imageID, creationDate, userID }) => {
   try {
-    const id = await transactionRepository.create({
-      amount,
-      date,
-      userId,
-      placeId,
-    });
-    return getById(id);
+    //eerst album aanmaken:
+    const albumID = await albumRepository.create({ albumName, creationDate, userID });
+
+    //foto toevoegen -> new record in tussentabel
+    return getById(albumID);
+
   } catch (error) {
     throw handleDBError(error);
   }
-};
+}
+
 
 module.exports = {
   getAll,
   getById,
   getAllByUserId,
   create,
+  createAndAddFoto
 };
