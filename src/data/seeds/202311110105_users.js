@@ -1,4 +1,5 @@
 const { tables } = require('..');
+const Role = require('../../core/roles');
 
 module.exports = {
     seed: async (knex) => {
@@ -24,16 +25,23 @@ module.exports = {
         await knex.raw('ALTER TABLE ?? AUTO_INCREMENT = 1', [tables.users]);
 
         // add new data to table:
-        // (firstName, lastName, passwordHash) 
-        // TODO: possibly change firstname & lastname -> to either include username or replace both with username
-        // then also testdata will need to change
+        // userID | email | passwordHash | roles (all passwords are 12345678)
+        // all stored hashes are different, however they all decode to the same p.w. -> n-runs of testpw.js
+        // TODO: adjust testdata
         await knex(tables.users).insert([
-            { userID: 1, firstName: 'David', lastName: 'Bowie', passwordHash: 'B0B71BC6697DE5D6D7287436459C1CD7FB50150B20B955CC1C37C9466D06858F' },
-            { userID: 2, firstName: 'Bruce', lastName: 'Dickinson', passwordHash: 'E9299A4A9BCF81DBDA11BDB42DE880D95EFE0B9A9C43B6F56C313EB7A0FD0CF5' },
-            { userID: 3, firstName: 'Dave', lastName: 'Mustaine', passwordHash: '9E492FD5A1ACBDEE394C7BF8BB37DEA3181E839FA138B9D737D65ACCFE23BCA0' },
-            { userID: 4, firstName: 'Damon', lastName: 'Albarn', passwordHash: 'CA227130C8483D84A404FC496E0AA8A2DCF6421C44C826C21ADDE38564EA887C' },
-            { userID: 5, firstName: 'David', lastName: 'Draiman', passwordHash: '87B31EF176B701DA34786634FFB6A9A1703CB67AFC53FA3CE1948CCD827DAD80' },
-            { userID: 6, firstName: 'Mary Elizabeth', lastName: 'McGlynn', passwordHash: '9A26A6101FBE719765E96537A962743005F3BCA36907B054B5C4E53CBC1A89DE' },
+            { userID: 1, email: 'first.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$jCb6jJS7xOhyEJKXyBpjlg$qipMaRR/WVc0agyhqx+ykDnmMYb7lWFlzKeIoXyCkbk', 
+                roles: JSON.stringify([Role.USER])
+            },
+            { userID: 2, email: 'second.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$EI6lB0hmQosa/H6bo1I5Fw$lnLj5ZU9r2yimdN9DY/X7n/qXIwqGencj1FnWF9kFlk', 
+                roles: JSON.stringify([Role.USER]) },
+            { userID: 3, email: 'third.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$JTGPAhrUSEamvez5NKw63A$aDI63Phn/RA/1lxVGBu1eGOK2ECRtJUwHlJz+pPcPJw', 
+                roles: JSON.stringify([Role.USER]) },
+            { userID: 4, email: 'fourth.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$wx/txvjhtS+cuy7B3eRIfg$5Wch+oaqBSS+R5ce3tMTo3dGnvHKPt3AeZZLuazS5SY', 
+                roles: JSON.stringify([Role.USER]) },
+            { userID: 5, email: 'fifth.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$fwWBt1MrQIV9V96PfrcpDA$mXeuWu2uV80ryS9iqv9WKdcBaSxgvqIHWyMZYbG+fIM', 
+                roles: JSON.stringify([Role.USER]) },
+            { userID: 6, email: 'sixth.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$JFLiS6mqGm5JGwUYkRZblQ$nRGWnhN2ONTpEbW8rEICzZpkgpPK9UUMQMMM7bcdgRQ', 
+                roles: JSON.stringify([Role.USER, Role.ADMIN]) },
         ]);
     },
 };

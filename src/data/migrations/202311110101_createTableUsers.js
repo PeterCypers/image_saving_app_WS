@@ -4,9 +4,11 @@ module.exports = {
     up: async(knex) => {
         await knex.schema.createTable(tables.users, (table) => {
             table.increments('userID');
-            table.string('firstName', 255);
-            table.string('lastName', 255);
-            table.string('passwordHash', 255);
+            table.string('email', 255).notNullable();
+            table.string('passwordHash', 255).notNullable();
+            table.jsonb('roles').notNullable();
+
+            table.unique('email', 'idx_user_email_unique');
         })
     },
     down: (knex) => {

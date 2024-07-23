@@ -6,4 +6,9 @@ module.exports = {
       username: 'DATABASE_USERNAME',
       password: 'DATABASE_PASSWORD',
     },
+    auth: {
+      jwt: {
+        secret: 'JWT_SECRET',
+      }
+    }
 }

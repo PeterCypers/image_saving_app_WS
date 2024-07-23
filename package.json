@@ -8,8 +8,10 @@
   "dependencies": {
     "@koa/cors": "^4.0.0",
     "@koa/router": "^11.0.2",
+    "argon2": "^0.40.3",
     "config": "^3.3.9",
     "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "knex": "^3.0.1",
     "koa": "^2.14.2",
     "koa-body": "^6.0.1",

@@ -10,11 +10,11 @@ const handleDBError = (error) => {
         return ServiceError.validationFailed(
           'An album with this name already exists'
         );
-        /*
+        
       case sqlMessage.includes('idx_user_email_unique'):
         return ServiceError.validationFailed(
           'There is already a user with this email address'
-        );*/
+        );
       default:
         return ServiceError.validationFailed('This item already exists');
     }
