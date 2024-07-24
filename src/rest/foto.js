@@ -3,6 +3,7 @@ const Joi = require('joi');
 const validate = require('../core/validation');
 const fotoService = require('../service/foto');
 const { getLogger } = require('../core/logging'); //testing
+const { requireAuthentication /*, makeRequireRole */} = require('../core/auth');
 
 /**
  * file opslaan: (met koa-body ipv multer -> koa-body != koa-bodyparser)
@@ -26,6 +27,8 @@ const getAllFotos = async (ctx) => {
 getAllFotos.validationScheme = null;
 
 const getAllByUserId = async (ctx) => {
+  // ctx.body = await fotoService.getAllByUserId(ctx.state.session.userID); //TODO (1)
+  
   ctx.body = await fotoService.getAllByUserId(Number(ctx.params.id));
 }
 //waarom Joi.object errond?
@@ -156,6 +159,8 @@ module.exports = (app) => {
     prefix: '/fotos',
   });
 
+  //TODO nadat login werkt -> requireAuthentication overal bij zetten (zie rest/user.js) -> alle features eisen user = logged in
+
   //getAll zal niet meer gebeuren -> allByUserID
   router.get(
     '/',
@@ -166,6 +171,7 @@ module.exports = (app) => {
   router.post('/save/', saveFoto);
   router.get(
     '/:id',
+    // requireAuthentication, //TODO (1)
     validate(getAllByUserId.validationScheme),
     getAllByUserId
   );

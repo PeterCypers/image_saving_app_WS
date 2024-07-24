@@ -40,7 +40,7 @@ module.exports = {
                 roles: JSON.stringify([Role.USER]) },
             { userID: 5, email: 'fifth.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$fwWBt1MrQIV9V96PfrcpDA$mXeuWu2uV80ryS9iqv9WKdcBaSxgvqIHWyMZYbG+fIM', 
                 roles: JSON.stringify([Role.USER]) },
-            { userID: 6, email: 'sixth.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$JFLiS6mqGm5JGwUYkRZblQ$nRGWnhN2ONTpEbW8rEICzZpkgpPK9UUMQMMM7bcdgRQ', 
+            { userID: 6, email: 'sixth.admin@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$JFLiS6mqGm5JGwUYkRZblQ$nRGWnhN2ONTpEbW8rEICzZpkgpPK9UUMQMMM7bcdgRQ', 
                 roles: JSON.stringify([Role.USER, Role.ADMIN]) },
         ]);
     },

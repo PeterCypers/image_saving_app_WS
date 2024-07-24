@@ -2,6 +2,28 @@ const Router = require('@koa/router');
 const Joi = require('joi');
 const userService = require('../service/user');
 const validate = require('../core/validation');
+const { requireAuthentication, makeRequireRole } = require('../core/auth');
+const Role = require('../core/roles');
+
+/**
+ * Check if the signed in user can access the given user's information.
+ */
+const checkUserId = (ctx, next) => {
+  const { userID, roles } = ctx.state.session;
+  const { id } = ctx.params;
+
+  // Users can only access their own data |  Admins can access everyone's data
+  if (id !== userID && !roles.includes(Role.ADMIN)) {
+    return ctx.throw(
+      403,
+      "You are not allowed to view this user's information",
+      {
+        code: 'FORBIDDEN',
+      }
+    );
+  }
+  return next();
+};
 
 const getAllUsers = async (ctx) => {
   const users = await userService.getAll();
@@ -79,34 +101,49 @@ module.exports = function installUserRoutes(app) {
     prefix: '/users',
   });
 
-  router.get(
-    '/',
-    validate(getAllUsers.validationScheme),
-    getAllUsers
-  );
-  router.get(
-    '/:id',
-    validate(getUserById.validationScheme),
-    getUserById
+  // No authorisation -> login & register to obtain JWT
+  router.post(
+    '/login',
+    validate(login.validationScheme),
+    login
   );
   router.post(
     '/register',
     validate(register.validationScheme),
     register
   );
-  router.post(
-    '/login',
-    validate(login.validationScheme),
-    login
+
+  // Only admin access endpoint getAll users
+  const requireAdmin = makeRequireRole(Role.ADMIN);
+
+  router.get(
+    '/',
+    requireAuthentication,
+    requireAdmin,
+    validate(getAllUsers.validationScheme),
+    getAllUsers
+  );
+
+  // Authorization required -> only logged in users
+  router.get(
+    '/:id',
+    requireAuthentication,
+    validate(getUserById.validationScheme),
+    checkUserId,
+    getUserById
   );
   router.put(
     '/:id',
+    requireAuthentication,
     validate(updateUserById.validationScheme),
+    checkUserId,
     updateUserById
   );
   router.delete(
     '/:id',
+    requireAuthentication,
     validate(deleteUserById.validationScheme),
+    checkUserId,
     deleteUserById
   );
 

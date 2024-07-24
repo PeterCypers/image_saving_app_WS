@@ -9,8 +9,9 @@ const JWT_EXPIRATION_INTERVAL = config.get('auth.jwt.expirationInterval');
 
 const generateJWT = (user) => {
 
+  // TODO (check if still works) value verandert om conform mijn DB te zijn: "userID" 
   const tokenData = {
-    userId: user.id,    //TODO controlleer of het niet user.userID moet zijn...
+    userID: user.userID,    
     roles: user.roles,
   };
 

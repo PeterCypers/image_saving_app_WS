@@ -6,6 +6,42 @@ const handleDBError = require('./_handleDBError');
 const { hashPassword, verifyPassword } = require('../core/password');
 const Role = require('../core/roles');
 const { generateJWT, verifyJWT } = require('../core/jwt');
+const { getLogger } = require('../core/logging');
+
+const checkAndParseSession = async (authHeader) => {
+  if (!authHeader) {
+    throw ServiceError.unauthorized("You need to be signed in");
+  }
+
+  if (!authHeader.startsWith('Bearer ')) {
+    throw ServiceError.unauthorized("Invalid authentication token");
+  }
+
+  //de header token = 'Bearer '+token substr7 skips Bearer and the space and gets the token
+  const authToken = authHeader.substring(7);
+
+  try {
+    const { roles, userID } = await verifyJWT(authToken);
+
+    return {
+      userID,
+      roles,
+      authToken
+    };
+
+  } catch (error) {
+    getLogger().error(error.message, { error });
+    throw new Error(error.message);
+  }
+}
+
+const checkRole = (role, roles) => {
+  const hasPermission = roles.includes(role);
+
+  if (!hasPermission) {
+    throw ServiceError.forbidden('You are not allowed to view this part of the application');
+  }
+}
 
 // alle params van user teruggeven zonder paswoord
 const makeExposedUser = ({ userID, email, roles }) => ({userID, email, roles})
@@ -118,4 +154,6 @@ module.exports = {
   updateById,
   deleteById,
   login,
+  checkAndParseSession,
+  checkRole
 };
