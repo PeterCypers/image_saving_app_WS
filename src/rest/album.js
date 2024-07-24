@@ -3,6 +3,7 @@ const Joi = require('joi');
 const validate = require('../core/validation');
 const albumService = require('../service/album');
 const { getLogger } = require('../core/logging'); //testing
+const { requireAuthentication /*, makeRequireRole */} = require('../core/auth');
 
 // never used
 const getAllAlbums = async (ctx) => {}
@@ -122,6 +123,8 @@ module.exports = (app) => {
   const router = new Router({
     prefix: '/albums',
   });
+
+  //TODO nadat login werkt -> requireAuthentication overal bij zetten (zie rest/user.js) -> alle features eisen user = logged in
 
   router.get('/', getAllAlbums); //wordt niet gebruikt
   router.post('/', validate(createAlbum.validationScheme), createAlbum);

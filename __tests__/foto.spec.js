@@ -3,6 +3,7 @@ const createServer = require('../src/createServer');
 const {getKnex, tables} = require('../src/data');
 
 //TODO: verder testing na login/authenticatie afgewerkt
+// user has: userID | email | passwordHash | roles
 const data = {
     fotos: [{
         fotoID: 1,
@@ -22,6 +23,7 @@ const data = {
         dateUploaded: new Date(2021, 2, 2, 2, 2),
         userID: 1
     }],
+    // TODO user aanpassen op nieuwe db-structuur user-table
     users: [{
         userID: 1,
         firstName: 'test',
