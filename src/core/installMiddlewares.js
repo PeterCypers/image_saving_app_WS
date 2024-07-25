@@ -39,8 +39,22 @@ const CORS_MAX_AGE = config.get('cors.maxAge'); //@koa/cors
  */
 module.exports = function installMiddleware(app) {
 
-  // 0. CyberSec WS-H6 TODO: if possible figure out how to serve files statically and include most security headers
-  // app.use(koaHelmet());
+  // 0. CyberSec WS-H6 -> net::ERR_BLOCKED_BY_RESPONSE.NotSameOrigin -> bij het ophalen van fotos met getAll
+  app.use(koaHelmet({crossOriginResourcePolicy: false}));
+
+  /* app.use(koaHelmet()); equals:
+      app.use(koaHelmet.contentSecurityPolicy());
+      app.use(koaHelmet.dnsPrefetchControl());
+      app.use(koaHelmet.expectCt());
+      app.use(koaHelmet.frameguard());
+      app.use(koaHelmet.hidePoweredBy());
+      app.use(koaHelmet.hsts());
+      app.use(koaHelmet.ieNoOpen());
+      app.use(koaHelmet.noSniff());
+      app.use(koaHelmet.permittedCrossDomainPolicies());
+      app.use(koaHelmet.referrerPolicy());
+      app.use(koaHelmet.xssFilter());
+   */
 
   // 1. Cors
   app.use(
