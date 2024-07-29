@@ -1,45 +1,37 @@
 const fotoRepository = require('../repository/foto');
+const ServiceError = require('../core/serviceError');
+const handleDBError = require('./_handleDBError');
 /**  findAll,
   findById,
   create,
   deleteById, */
-const getAll = async () => {
-  const items = await fotoRepository.findAll();
-  return {
-    items,
-    count: items.length,
-  };
-};
-// nieuwe functie nodig om alle fotos voor 1 gebruiker terug te geven:
-const getAllByUserId = async (userID) => {
-  const items = await fotoRepository.findAllByUserId(userID);
+const getAll = async (userID) => {
+  const items = await fotoRepository.findAll(userID);
   return {
     items,
     count: items.length,
   };
 };
 
-const getById = async (userID, fotoID) => {
-  const items = await fotoRepository.findById(userID, fotoID);
+const getById = async (fotoID, userID) => {
+  const foto = await fotoRepository.findById(fotoID);
 
-  if (!items) {
-    throw Error(`No foto with id ${id} exists`, { fotoID });
+  if (!foto || foto.userID !== userID) {
+    throw ServiceError.notFound(`No foto with id ${fotoID} exists`, { fotoID });
   }
 
-  return {
-    items,
-    count: items.length,
-  };
+  return foto;
 };
 
 const create = async ({ location, dateUploaded, userID }) => {
-  /*const id =*/ //await fotoRepository.create({ location, dateUploaded, userID });
-  //return getById(id);
+  const formattedDate = formatIsoString(dateUploaded/*.toISOString()*/); // dateUploaded is already in ISOString format
   const existingFoto = await fotoRepository.findByLocation(location);
   if (existingFoto) {
     return existingFoto; // Return the existing entry if it already exists
   }
-  await fotoRepository.create({ location, dateUploaded, userID });
+  /*const id =*/ //await fotoRepository.create({ location, dateUploaded, userID });
+  //return getById(id);
+  await fotoRepository.create({ location, formattedDate, userID });
 };
 
 // TODO: rework to getting 2 parameters
@@ -51,10 +43,23 @@ const deleteById = async (id) => {
   }
 };
 
+function formatIsoString(isoString) {
+  let date = new Date(isoString);
+
+  // Format the date and time
+  let formattedDate = date.getFullYear() + '-' +
+                      ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                      ('0' + date.getDate()).slice(-2) + ' ' +
+                      ('0' + date.getHours()).slice(-2) + ':' +
+                      ('0' + date.getMinutes()).slice(-2) + ':' +
+                      ('0' + date.getSeconds()).slice(-2);
+
+  return formattedDate;
+}
+
 module.exports = {
   getAll,
   getById,
   create,
   deleteById,
-  getAllByUserId,
 };
