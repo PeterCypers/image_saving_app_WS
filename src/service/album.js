@@ -51,19 +51,22 @@ const addFotoToAlbum = async (albumID, fotoID) => {
 
 
 const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => {
-  const formattedDate = formatIsoString(creationDate.toISOString());
-  try {
-    //eerst album aanmaken (can throw duplicate DB-entry eror):
-    const albumID = await albumRepository.create({ albumName, formattedDate, userID });
 
-    //foto toevoegen -> new record in tussentabel
-    const newAlbum = await getById(albumID, userID);
-    const albumFoto = await albumFotoService.create(albumID, fotoID); // not sure if this needs returning...
-
-    return newAlbum;
-  } catch (error) {
-    throw handleDBError(error);
+  const existingAlbum = await albumRepository.findByNameAndUserID(albumName, userID);
+  if(existingAlbum){
+    throw ServiceError.validationFailed(`An album with name ${albumName} already exists`, { albumName });
   }
+  
+  const formattedDate = formatIsoString(creationDate.toISOString());
+
+  //eerst album aanmaken (can throw duplicate DB-entry eror)(outdated: see handleDBError):
+  const albumID = await albumRepository.create({ albumName, formattedDate, userID });
+
+  //foto toevoegen -> new record in tussentabel
+  const newAlbum = await getById(albumID, userID);
+  const albumFoto = await albumFotoService.create(albumID, fotoID); // not sure if this needs returning...
+
+  return newAlbum;
 }
 
 function formatIsoString(isoString) {

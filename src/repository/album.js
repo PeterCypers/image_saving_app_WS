@@ -13,6 +13,12 @@ const findById = (albumID) => {
   return getKnex()(tables.fotoalbum).where('albumID', albumID).first();
 };
 
+// rule: album name unique by user
+const findByNameAndUserID = (albumName, userID) => {
+  getLogger().info('Querying album by name and userID', { albumName, userID });
+  return getKnex()(tables.fotoalbum).where('albumName', albumName).andWhere('userID', userID).first();
+}
+
 /**
  * Create a new foto with the given `albumName` and `creationDate` and `userID`.
  *albumName: 'NotEmptyUniqueString', creationDate: '2023-10-21 00:00:00', userID: 1
@@ -67,4 +73,5 @@ module.exports = {
   //findAllByUserId,
   findById,
   create,
+  findByNameAndUserID,
 }

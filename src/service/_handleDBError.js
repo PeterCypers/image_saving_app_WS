@@ -6,10 +6,11 @@ const handleDBError = (error) => {
 
   if (code === 'ER_DUP_ENTRY') {
     switch (true) {
-      case sqlMessage.includes('idx_album_name_unique'):
-        return ServiceError.validationFailed(
-          'An album with this name already exists'
-        );
+      /* edge-case -> multiple users can choose the same album-name -> see: migrations/createTableFotoAlbum.js */
+      // case sqlMessage.includes('idx_album_name_unique'):
+      //   return ServiceError.validationFailed(
+      //     'An album with this name already exists'
+      //   );
         
       case sqlMessage.includes('idx_user_email_unique'):
         return ServiceError.validationFailed(
