@@ -4,14 +4,18 @@ const { tables, getKnex } = require('../data/index');
 /**
  * Find all fotos.
  */
-const findAll = () => {
-  getLogger().info('Finding all fotos');
-  return getKnex()(tables.foto).select().orderBy('dateUploaded', 'DESC');
+const findAll = (userID) => {
+  getLogger().info('Querying fotos by User id', { userID });
+  return getKnex()(tables.foto).where('userID', userID).orderBy('dateUploaded', 'DESC');
 };
 
-const findAllByUserId = (id) => {
-  getLogger().info('Querying fotos by User Id', { id });
-  return getKnex()(tables.foto).where('userID', id);
+/**
+ * Find a foto with the given `id`.
+ * @param {number} fotoID - Id of the foto to find.
+ */
+const findById = (fotoID) => {
+  getLogger().info('Querying foto by id', { fotoID });
+  return getKnex()(tables.foto).where('fotoID', fotoID).first();
 };
 
 /**
@@ -27,17 +31,6 @@ const findCount = async () => {
   const [count] = await getKnex()(tables.foto).count();
 
   return count['count(*)'];
-};
-
-/**
- * Find a foto with the given `id`.
- * @param {number} userID - Id of the user
- * @param {number} fotoID - Id of the foto to find.
- */
-// TODO: is this ever necesary? to get a foto by userID then fotoID...
-const findById = (userID, fotoID) => {
-  getLogger().info('Querying fotos by foto Id', { fotoID });
-  return getKnex()(tables.foto).where('userID',userID).andWhere('fotoID', fotoID).first();
 };
 
 const findByLocation = async (location) => {
@@ -61,11 +54,11 @@ const findByLocation = async (location) => {
  *
  * @returns {Promise<number>} Created foto's id
  */
-const create = async ({ location, dateUploaded, userID }) => {
+const create = async ({ location, formattedDate, userID }) => {
   try {
     /*const [fotoID] = */await getKnex()(tables.foto).insert({
       location,
-      dateUploaded,
+      dateUploaded: formattedDate,
       userID,
     });
 
@@ -104,6 +97,5 @@ module.exports = {
   findCount,
   create,
   deleteById,
-  findAllByUserId,
   findByLocation,
 };

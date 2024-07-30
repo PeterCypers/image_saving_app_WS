@@ -1,21 +1,21 @@
 const albumRepository = require('../repository/album');
+const albumFotoService = require('./album_foto');
 const ServiceError = require('../core/serviceError');
 const handleDBError = require('./_handleDBError');
 
-// zal nooit gebruikt worden
-const getAll = async () => {
-  const items = await albumRepository.findAll();
+const getAll = async (userID) => {
+  const items = await albumRepository.findAll(userID);
   return {
     items,
     count: items.length,
   };
 };
 
-const getById = async (id) => {
-  const album = await albumRepository.findById(id);
+const getById = async (albumID, userID) => {
+  const album = await albumRepository.findById(albumID);
 
-  if (!album) {
-    throw ServiceError.notFound(`No album with id ${id} exists`, { id });
+  if (!album || album.userID !== userID) {
+    throw ServiceError.notFound(`No album with id ${albumID} exists`, { albumID });
   }
 
   return album;
@@ -30,30 +30,54 @@ const getAllByUserId = async (userID) => {
   };
 };
 
-// TODO: try-catch + error might be needed -> duplicate -> check vb-app place & handle DB error
-// needs complete reworking
+
+// you can not create 2 albums with the same name -> handleDB error working
 const create = async ({ albumName, creationDate, userID }) => {
+  const formattedDate = formatIsoString(creationDate.toISOString());
 
   try {
-    const id = await albumRepository.create({ albumName, creationDate, userID });
-    return getById(id);
+    const id = await albumRepository.create({ albumName, formattedDate, userID });
+    return getById(id, userID);
 
   } catch (error) {
     throw handleDBError(error);
   }
 };
 
-const createAndAddFoto = async ({ albumName, imageID, creationDate, userID }) => {
+const addFotoToAlbum = async (albumID, fotoID) => {
+  const albumFoto = await albumFotoService.create(albumID, fotoID);
+  return albumFoto;
+}
+
+
+const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => {
+  const formattedDate = formatIsoString(creationDate.toISOString());
   try {
-    //eerst album aanmaken:
-    const albumID = await albumRepository.create({ albumName, creationDate, userID });
+    //eerst album aanmaken (can throw duplicate DB-entry eror):
+    const albumID = await albumRepository.create({ albumName, formattedDate, userID });
 
     //foto toevoegen -> new record in tussentabel
-    return getById(albumID);
+    const newAlbum = await getById(albumID, userID);
+    const albumFoto = await albumFotoService.create(albumID, fotoID); // not sure if this needs returning...
 
+    return newAlbum;
   } catch (error) {
     throw handleDBError(error);
   }
+}
+
+function formatIsoString(isoString) {
+  let date = new Date(isoString);
+
+  // Format the date and time
+  let formattedDate = date.getFullYear() + '-' +
+                      ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
+                      ('0' + date.getDate()).slice(-2) + ' ' +
+                      ('0' + date.getHours()).slice(-2) + ':' +
+                      ('0' + date.getMinutes()).slice(-2) + ':' +
+                      ('0' + date.getSeconds()).slice(-2);
+
+  return formattedDate;
 }
 
 
@@ -62,5 +86,6 @@ module.exports = {
   getById,
   getAllByUserId,
   create,
-  createAndAddFoto
+  addFotoToAlbum,
+  createAndAddFoto,
 };

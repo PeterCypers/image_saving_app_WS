@@ -1,22 +1,17 @@
 const { getLogger } = require('../core/logging');
 const { tables, getKnex } = require('../data/index');
 
-// zal nooit gebruikt worden
-const findAll = () => {
-  getLogger().info('Finding all albums');
-  return getKnex()(tables.fotoalbum).select().orderBy('dateUploaded', 'DESC');
+// get all albums will always give albums by userID
+// standard order by creation date oldest to newest
+const findAll = (userID) => {
+  getLogger().info('Querying albums by User Id', { userID });
+  return getKnex()(tables.fotoalbum).where('userID', userID).orderBy('creationDate');
 };
 
-const findById = (id) => {
-  getLogger().info('Querying album by id', { id });
-  return getKnex()(tables.fotoalbum).where('albumID', id).first();
+const findById = (albumID) => {
+  getLogger().info('Querying album by id', { albumID });
+  return getKnex()(tables.fotoalbum).where('albumID', albumID).first();
 };
-
-const findAllByUserId = (id) => {
-  getLogger().info('Querying albums by User Id', { id });
-  return getKnex()(tables.fotoalbum).where('userID', id);
-};
-
 
 /**
  * Create a new foto with the given `albumName` and `creationDate` and `userID`.
@@ -29,11 +24,11 @@ const findAllByUserId = (id) => {
  *
  * @returns {Promise<number>} Created album's id
  */
-const create = async ({ albumName, creationDate, userID }) => {
+const create = async ({ albumName, formattedDate, userID }) => {
   try {
     const [albumID] = await getKnex()(tables.fotoalbum).insert({
       albumName,
-      creationDate,
+      creationDate: formattedDate,
       userID,
     });
 
@@ -69,7 +64,7 @@ const deleteById = async (id) => {
 
 module.exports = {
   findAll,
-  findAllByUserId,
+  //findAllByUserId,
   findById,
   create,
 }

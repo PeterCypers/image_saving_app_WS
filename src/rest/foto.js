@@ -22,25 +22,20 @@ const path = require('path');
 
 // no longer to be used, or possibly used by admin
 const getAllFotos = async (ctx) => {
-  ctx.body = await fotoService.getAll();
+  const { userID } = ctx.state.session;
+  ctx.body = await fotoService.getAll(userID);
 };
 getAllFotos.validationScheme = null;
 
-const getAllByUserId = async (ctx) => {
-  // ctx.body = await fotoService.getAllByUserId(ctx.state.session.userID); //TODO (1)
-  
-  ctx.body = await fotoService.getAllByUserId(Number(ctx.params.id));
-}
-//waarom Joi.object errond?
-getAllByUserId.validationScheme = {
-  params: Joi.object({
-    id: Joi.number().integer().positive(),
-  }),
-};
-
 const getFotoById = async (ctx) => {
-  ctx.body = await fotoService.getById(Number(ctx.params.userID),Number(ctx.params.fotoID));
+  const { userID } = ctx.state.session;
+  ctx.body = await fotoService.getById(Number(ctx.params.fotoID), userID);
 };
+getFotoById.validationScheme = {
+  params: Joi.object({
+    fotoID: Joi.number().integer().positive(),
+  }),
+}
 
 const deleteFoto = async (ctx) => {
   await fotoService.deleteById(ctx.params.id);
@@ -110,7 +105,7 @@ const saveFoto = async (ctx) => {
     // Save metadata to the database
     const existingFoto = await fotoService.create({
       location: fileUrl,
-      dateUploaded: formatIsoString(dateUploaded) || formatIsoString(new Date().toISOString()),
+      dateUploaded: dateUploaded || new Date().toISOString(),
       userID: userID
     });
 
@@ -134,20 +129,12 @@ const saveFoto = async (ctx) => {
     ctx.body = { error: 'Error uploading file' };
   }
 }
-
-function formatIsoString(isoString) {
-  let date = new Date(isoString);
-
-  // Format the date and time
-  let formattedDate = date.getFullYear() + '-' +
-                      ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-                      ('0' + date.getDate()).slice(-2) + ' ' +
-                      ('0' + date.getHours()).slice(-2) + ':' +
-                      ('0' + date.getMinutes()).slice(-2) + ':' +
-                      ('0' + date.getSeconds()).slice(-2);
-
-  return formattedDate;
-}
+saveFoto.validationScheme = {
+  body: {
+    userID: Joi.number().integer().positive(),
+    dateUploaded: Joi.date().iso()
+  },
+};
 
 /**
  * Install foto routes in the given router.
@@ -159,25 +146,18 @@ module.exports = (app) => {
     prefix: '/fotos',
   });
 
-  //TODO nadat login werkt -> requireAuthentication overal bij zetten (zie rest/user.js) -> alle features eisen user = logged in
+  // all fotos endpoints require a logged in user
+  router.use(requireAuthentication);
 
-  //getAll zal niet meer gebeuren -> allByUserID
-  router.get(
-    '/',
-    validate(getAllFotos.validationScheme),
-    getAllFotos
-  );
-  // validate handled in front-end component, if bad file-type -> request won't get sent
-  router.post('/save/', saveFoto);
-  router.get(
-    '/:id',
-    // requireAuthentication, //TODO (1)
-    validate(getAllByUserId.validationScheme),
-    getAllByUserId
-  );
-  router.get('/:userID/:fotoID', getFotoById); //might not get used -> curious if works
-//   router.put('/:id', updateFoto);
-  router.delete('/:id', deleteFoto);
+  router.get('/', validate(getAllFotos.validationScheme), getAllFotos);
+  /**
+   * unique request handling the server-side storage of a fysical photo-file and metadata persistance
+   * some validation handled in front-end component: bad file-type -> request won't get sent
+   */
+  router.post('/save', validate(saveFoto.validationScheme), saveFoto);
+  router.get('/:id', validate(getFotoById.validationScheme), getFotoById); //TODO (1) not by userID, by fotoID
+//   router.put('/:id', updateFoto); // probably not used
+  router.delete('/:id', deleteFoto); //TODO
 
   app.use(router.routes()).use(router.allowedMethods());
 };

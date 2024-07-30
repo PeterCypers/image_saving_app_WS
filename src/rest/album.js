@@ -5,23 +5,24 @@ const albumService = require('../service/album');
 const { getLogger } = require('../core/logging'); //testing
 const { requireAuthentication /*, makeRequireRole */} = require('../core/auth');
 
-// never used
-const getAllAlbums = async (ctx) => {}
 
-const getAllByUserId = async (ctx) => {
-  ctx.body = await albumService.getAllByUserId(Number(ctx.params.userID));
-}
-getAllByUserId.validationScheme = {
-  params: Joi.object({
-    userID: Joi.number().integer().positive(),
-  }),
+const getAllAlbums = async (ctx) => {
+  const { userID } = ctx.state.session;
+  ctx.body = await albumService.getAll(userID);
 };
+getAllAlbums.validationScheme = null;
 
 //zal nooit gebruikt worden, enkel intern in servicelaag(create album)
 //ook probleem met 2 parameters in get by id
 const getAlbumById = async (ctx) => {
-  ctx.body = await albumService.getById(Number(ctx.params.userID),Number(ctx.params.albumID));
+  const { userID } = ctx.state.session;
+  ctx.body = await albumService.getById(Number(ctx.params.albumID), userID);
 }
+getAlbumById.validationScheme = {
+  params: Joi.object({
+    albumID: Joi.number().integer().positive(),
+  }),
+};
 
 // TODO:
 const deleteAlbum = async (ctx) => {
@@ -31,19 +32,18 @@ const deleteAlbum = async (ctx) => {
 
 //spread operator verzamelt alle properties en stelt ze gelijk aan zichzelf ~ zie obj.destru.
 //enkel de values die moeten aangepast worden (casting from strings to ...) aanpassen
-//datum moet niet meegegeven worden aan front-end, zal hier gemaakt worden
+//datum moet niet meegegeven worden aan front-end, zal hier gemaakt worden & in service geformat
 /**
  * 
- * @param {*} ctx albumname & userID
+ * @param {*} ctx albumname
  */
 const createAlbum = async (ctx) => {
-  const logger = getLogger();
-  logger.error(JSON.stringify(ctx.request.body));
+  const { userID } = ctx.state.session;
 
   const newAlbum = await albumService.create({
-    ...ctx.request.body, //er schiet enkel nog <albumName> over in de body... maar die mag als string blijven
-    creationDate: formatIsoString(new Date().toISOString()),
-    userID: Number(ctx.request.body.userID),
+    ...ctx.request.body, // bevat enkel <albumName> ... maar die mag als string blijven
+    creationDate: new Date(), // nieuw date doorsturen, formatting in service-laag
+    userID: userID,
   });
 
   ctx.status = 201;
@@ -52,20 +52,26 @@ const createAlbum = async (ctx) => {
 createAlbum.validationScheme = {
   body: {
     albumName: Joi.string().max(25),
-    userID: Joi.number().integer().positive(),
   },
 };
 
 
 /**
  * 
- * @param {*} ctx body: albumName, imageID | params: userID
+ * @param {*} ctx body: albumName, fotoID
+ * 
+ * albumName may not be empty or over 25 chars long and may not already exist
+ * 
+ * edge-case: the body has a fotoID -> it is 'technically' possible for a user to add someone elses foto to their albums
+ * the user should never get in that case considering no fotos of another user will be visible in their browser
  */
 const createAlbumAndAddFoto = async (ctx) => {
+  const { userID } = ctx.state.session;
+
   const newAlbum = await albumService.createAndAddFoto({
-    ...ctx.request.body, // albumName, imageID
-    creationDate: formatIsoString(new Date().toISOString()),
-    userID: Number(ctx.params.userID),
+    ...ctx.request.body, // albumName, fotoID
+    creationDate: new Date(), //moved formatting to service
+    userID: userID,
   });
 
   ctx.status = 201;
@@ -73,44 +79,30 @@ const createAlbumAndAddFoto = async (ctx) => {
 }
 createAlbumAndAddFoto.validationScheme = {
   body: {
-    albumName: Joi.string().max(25),
-    imageID: Joi.number().integer().positive(),
+    albumName: Joi.string().min(1).max(25),
+    fotoID: Joi.number().integer().positive(),
   },
+};
+
+/**
+ * empty body
+ * 
+ * @param {*} ctx params: albumID, imageID
+ * 
+ * should not be able to add foto to album if it is already in that album
+ */
+const addFotoToAlbum = async (ctx) => {
+  const albumFoto = await albumService.addFotoToAlbum(Number(ctx.params.albumID), Number(ctx.params.imageID));
+  ctx.status = 201;
+  ctx.body = albumFoto;
+}
+addFotoToAlbum.validationScheme = {
   params: Joi.object({
-    userID: Joi.number().integer().positive(),
+    albumID: Joi.number().integer().positive(),
+    imageID: Joi.number().integer().positive(),
   }),
 };
 
-// TODO:
-/**
- * body: imageID, userID
- * 
- * @param {*} ctx albumID
- * 
- * 
- */
-const addFotoToAlbum = async (ctx) => {
-  /*const updatedAlbum =*/ await albumService.update(Number(ctx.params.id), {
-    ...ctx.request.body,
-    creationDate: formatIsoString(new Date().toISOString()),
-    });
-    ctx.status = 204;
-}
-
-
-function formatIsoString(isoString) {
-  let date = new Date(isoString);
-
-  // Format the date and time
-  let formattedDate = date.getFullYear() + '-' +
-                      ('0' + (date.getMonth() + 1)).slice(-2) + '-' +
-                      ('0' + date.getDate()).slice(-2) + ' ' +
-                      ('0' + date.getHours()).slice(-2) + ':' +
-                      ('0' + date.getMinutes()).slice(-2) + ':' +
-                      ('0' + date.getSeconds()).slice(-2);
-
-  return formattedDate;
-}
 
 /**
  * Install foto routes in the given router.
@@ -124,16 +116,31 @@ module.exports = (app) => {
     prefix: '/albums',
   });
 
-  //TODO nadat login werkt -> requireAuthentication overal bij zetten (zie rest/user.js) -> alle features eisen user = logged in
+  //zelfde als bij elk request zetten, voor al deze endpoints moet de gebruiker ingelogd zijn
+  router.use(requireAuthentication);
 
-  router.get('/', getAllAlbums); //wordt niet gebruikt
-  router.post('/', validate(createAlbum.validationScheme), createAlbum);
-  router.post('/:userID', createAlbumAndAddFoto);
-  router.get('/:userID', validate(getAllByUserId.validationScheme), getAllByUserId);
-  router.get('/:userID/:albumID', getAlbumById); //zal nooit gebruikt worden
-  
-  router.put('/:albumID', addFotoToAlbum);
-  //router.put('/:id/rename', renameAlbum);
+  // GET /albums: Retrieve all albums for the logged-in user.
+  // GET /albums/{albumId}: Retrieve metadata for a specific album.
+  // GET /albums/{albumId}/images: Retrieve all images for a specific album.
+  // POST /albums: Create a new album.
+  // POST /albums/{albumId}/{imageId}: Add an image to an album.
+  // POST /albums/create-and-add-photo  -> special request, new albumname and fotoID in de body
+  // PUT /albums/{albumId}: Update the name of a specific album.
+  // DELETE /albums/{albumId}/images/{imageId}: Remove a specific image from a specific album
+
+  //done
+  router.get('/', validate(getAllAlbums.validationScheme), getAllAlbums); // get all albums for logged in user
+  router.get('/:albumID', validate(getAlbumById.validationScheme), getAlbumById); // get one album by id for logged in user
+  //router.get('/:albumID/images', validate(getAlbumImages.validationScheme), getAlbumImages); //TODO more complex, requires tables joining
+
+  router.post('/', validate(createAlbum.validationScheme), createAlbum); // create a new album for logged in user
+  router.post('/:albumID/:imageID', validate(addFotoToAlbum.validationScheme), addFotoToAlbum); // add existing foto to existing album if it's not already added
+  router.post('/create-and-add-photo', validate(createAlbumAndAddFoto.validationScheme), createAlbumAndAddFoto); // special request, combines createAlbum & addFotoToAlbum
+
+  //todo  (not urgent)
+  //router.put('/:albumID', updateAlbumName);
+  //router.delete('/:albumID', deleteById); // delete an album by id
+  //router.delete('/:albumID/images/:imageID', removeImageFromAlbum) // removes an image from an album
 
   app.use(router.routes()).use(router.allowedMethods());
 

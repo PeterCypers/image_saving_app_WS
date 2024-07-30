@@ -1,6 +1,6 @@
 const { getLogger } = require('../core/logging');
 const { tables, getKnex } = require('../data/index');
-//TODO: pas alle functies aan om op mijn database te werken
+
 /**
  * Find all places.
  */
