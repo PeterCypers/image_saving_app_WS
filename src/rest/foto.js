@@ -4,6 +4,7 @@ const validate = require('../core/validation');
 const fotoService = require('../service/foto');
 const { getLogger } = require('../core/logging'); //testing
 const { requireAuthentication /*, makeRequireRole */} = require('../core/auth');
+const { saveFileToSystem, deleteFileFromSystem } = require('../helpers/fileHelpers');
 
 /**
  * file opslaan: (met koa-body ipv multer -> koa-body != koa-bodyparser)
@@ -16,7 +17,10 @@ const { requireAuthentication /*, makeRequireRole */} = require('../core/auth');
 // const koaBody = require('koa-body');
 // app.use(koaBody({ multipart: true }));
 
-const fs = require('fs');
+const config = require('config');
+const NODE_ENV = config.get('env');
+// const ENABLE_FILE_DELETION = NODE_ENV === 'development';
+const ENABLE_FILE_DELETION = NODE_ENV === 'production';
 const path = require('path');
 
 
@@ -33,15 +37,35 @@ const getFotoById = async (ctx) => {
 };
 getFotoById.validationScheme = {
   params: Joi.object({
-    fotoID: Joi.number().integer().positive(),
+    id: Joi.number().integer().positive(),
   }),
 }
 
 const deleteFoto = async (ctx) => {
-  await fotoService.deleteById(ctx.params.id);
+  const logger = getLogger();
+  const fotoID = Number(ctx.params.id);
+  const { userID } = ctx.state.session;
+
+  try {
+    const fotoRecord = await fotoService.getById(fotoID, userID);
+
+    const fileUrl = fotoRecord.location;
+
+    if (ENABLE_FILE_DELETION) {
+      const uploadsDirectory = path.join(__dirname, '..', '..', 'public', 'uploads');
+      deleteFileFromSystem(fileUrl, uploadsDirectory);
+    }
+  } catch (error) {
+    logger.error('Error saving file:', err);
+  }
+  await fotoService.deleteById(fotoID);
   ctx.status = 204;
 };
-
+deleteFoto.validationScheme = {
+  params: Joi.object({
+    id: Joi.number().integer().positive(),
+  }),
+}
 
 // file Object keys: _events,_eventsCount,_maxListeners,lastModifiedDate,filepath,newFilename,originalFilename,mimetype,hashAlgorithm,size,_writeStream,hash
 const saveFoto = async (ctx) => {
@@ -72,35 +96,13 @@ const saveFoto = async (ctx) => {
 
 
   try {
-
-    // Get the temporary file path and original file name
-    const { filepath: tempFilePath, originalFilename: originalName } = fotoFile;
-
-    // Define the target path where the file will be saved
+    // Define the base directory where files are stored
     const uploadsDirectory = path.join(__dirname, '..', '..', 'public', 'uploads');
+    // need originalName locally
+    const { originalFilename: originalName } = fotoFile;
 
-    const userDirectory = path.join(uploadsDirectory, 'user' + userID.toString());
-
-    // Ensure the user-specific directory exists; create it if necessary
-    if (!fs.existsSync(userDirectory)){
-      fs.mkdirSync(userDirectory, { recursive: true });
-    }
-
-    // Construct the target path within the user-specific directory
-    const targetPath = path.join(userDirectory, originalName);
-
-    // Move the file to the target path
-    fs.renameSync(tempFilePath, targetPath);
-
-    // getting the difference between 2 paths:(ter info)
-    // const relativePath = path.relative(path.join(__dirname, '..', '..', 'public'), targetPath);
-
-    // Convert absolute path to URL-like path
-    const relativePath = targetPath.replace(uploadsDirectory, '').replace(/\\/g, '/');
-
-    //TODO: might change when website goes online
-    // Construct the complete URL
-    const fileUrl = `http://localhost:9000${relativePath}`;
+    // Save the file to the system and get the file URL
+    const fileUrl = saveFileToSystem(fotoFile, userID, uploadsDirectory);
 
     // Save metadata to the database
     const existingFoto = await fotoService.create({
@@ -157,7 +159,7 @@ module.exports = (app) => {
   router.post('/save', validate(saveFoto.validationScheme), saveFoto);
   router.get('/:id', validate(getFotoById.validationScheme), getFotoById); //TODO (1) not by userID, by fotoID
 //   router.put('/:id', updateFoto); // probably not used
-  router.delete('/:id', deleteFoto); //TODO
+  router.delete('/:id', validate(deleteFoto.validationScheme), deleteFoto); 
 
   app.use(router.routes()).use(router.allowedMethods());
 };

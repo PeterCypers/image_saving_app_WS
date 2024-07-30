@@ -36,13 +36,29 @@ const create = async ({ location, dateUploaded, userID }) => {
 
 // TODO: rework to getting 2 parameters
 const deleteById = async (id) => {
+  try{
   const deleted = await fotoRepository.deleteById(id);
-
+    
   if (!deleted) {
-    throw Error(`No foto with id ${id} exists`, { id });
+      throw ServiceError.notFound(`No foto with id ${id} exists`, { id });
+    }
+
+  }catch (error) {
+    throw handleDBError(error);
   }
 };
+/*
+  try {
+    const deleted = await transactionRepository.deleteById(id, userId);
 
+    if (!deleted) {
+      throw ServiceError.notFound(`No transaction with id ${id} exists`, { id });
+    }
+  } catch (error) {
+    throw handleDBError(error);
+  }
+};
+*/
 function formatIsoString(isoString) {
   let date = new Date(isoString);
 
@@ -57,9 +73,33 @@ function formatIsoString(isoString) {
   return formattedDate;
 }
 
+/**
+ * Deletes a file from the filesystem.
+ * 
+ * @param {string} fileUrl - The URL of the file to delete.
+ * @param {string} baseDir - The base directory where files are stored.
+ */
+const deleteFileFromSystem = (fileUrl, baseDir) => {
+  try {
+    // Construct the file path from the URL
+    const filePath = path.join(baseDir, fileUrl.replace(/^http:\/\/localhost:9000/, ''));
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.info(`File deleted successfully: ${filePath}`);
+    } else {
+      console.warn(`File not found: ${filePath}`);
+    }
+  } catch (err) {
+    console.error('Error deleting file:', err);
+    throw err; // Re-throw to handle in the caller if necessary
+  }
+};
+
 module.exports = {
   getAll,
   getById,
   create,
   deleteById,
+  deleteFileFromSystem,
 };
