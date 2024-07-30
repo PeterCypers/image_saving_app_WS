@@ -19,8 +19,8 @@ const { saveFileToSystem, deleteFileFromSystem } = require('../helpers/fileHelpe
 
 const config = require('config');
 const NODE_ENV = config.get('env');
-// const ENABLE_FILE_DELETION = NODE_ENV === 'development';
-const ENABLE_FILE_DELETION = NODE_ENV === 'production';
+const ENABLE_FILE_DELETION = NODE_ENV === 'development';
+// const ENABLE_FILE_DELETION = NODE_ENV === 'production';
 const path = require('path');
 
 
@@ -56,7 +56,7 @@ const deleteFoto = async (ctx) => {
       deleteFileFromSystem(fileUrl, uploadsDirectory);
     }
   } catch (error) {
-    logger.error('Error saving file:', err);
+    logger.error('Error saving file:', error);
   }
   await fotoService.deleteById(fotoID);
   ctx.status = 204;
