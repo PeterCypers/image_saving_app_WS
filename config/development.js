@@ -25,6 +25,7 @@ module.exports = {
       jwt: {
         secret: 'overwrittenbyvalueinsideenvironmentfile',
         expirationInterval: 60 * 60 * 1000, // ms (1 hour)
+        // expirationInterval: 5 * 1000, // extra short expiry for testing(5 sec)
         issuer: 'fotos.hogent.be',
         audience: 'fotos.hogent.be',
       },

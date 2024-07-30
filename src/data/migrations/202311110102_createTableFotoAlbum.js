@@ -6,8 +6,11 @@ module.exports = {
             table.string('albumName', 255);
             table.dateTime('creationDate');
             table.integer('userID').unsigned().notNullable();
-            //album naam moet uniek zijn:
-            table.unique('albumName', 'idx_album_name_unique');
+            /*outdated (*): 
+            album naam moet uniek zijn:
+            table.unique('albumName', 'idx_album_name_unique');*/
+            
+            //(*) refactor -> edgecase -> verschillende users willen dezelfde album-naam -> dit moet kunnen
 
             table.foreign('userID', 'FK_FotoAlbum_Users')
             .references(`${tables.users}.userID`)
