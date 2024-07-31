@@ -69,6 +69,15 @@ const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => 
   return newAlbum;
 }
 
+// tussentabel raadplegen get all by FK albumID in fotoalbum_foto
+const getAlbumImages = async(albumID) => {
+  const items = await albumFotoService.getAllByAlbumId(albumID);
+  return {
+    items,
+    count: items.length,
+  };
+}
+
 function formatIsoString(isoString) {
   let date = new Date(isoString);
 
@@ -91,4 +100,5 @@ module.exports = {
   create,
   addFotoToAlbum,
   createAndAddFoto,
+  getAlbumImages,
 };

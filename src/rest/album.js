@@ -103,6 +103,15 @@ addFotoToAlbum.validationScheme = {
   }),
 };
 
+const getAlbumImages = async (ctx) => {
+  ctx.body = await albumService.getAlbumImages(Number(ctx.params.albumID));
+}
+getAlbumImages.validationScheme = {
+  params: Joi.object({
+    albumID: Joi.number().integer().positive(),
+  }),
+};
+
 
 /**
  * Install foto routes in the given router.
@@ -131,7 +140,7 @@ module.exports = (app) => {
   //done
   router.get('/', validate(getAllAlbums.validationScheme), getAllAlbums); // get all albums for logged in user
   router.get('/:albumID', validate(getAlbumById.validationScheme), getAlbumById); // get one album by id for logged in user
-  //router.get('/:albumID/images', validate(getAlbumImages.validationScheme), getAlbumImages); //TODO more complex, requires tables joining
+  router.get('/:albumID/images', validate(getAlbumImages.validationScheme), getAlbumImages); //get all images by album
 
   router.post('/', validate(createAlbum.validationScheme), createAlbum); // create a new album for logged in user
   router.post('/:albumID/:imageID', validate(addFotoToAlbum.validationScheme), addFotoToAlbum); // add existing foto to existing album if it's not already added
