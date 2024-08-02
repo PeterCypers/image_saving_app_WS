@@ -44,6 +44,18 @@ const create = async ({ albumName, creationDate, userID }) => {
   }
 };
 
+const deleteById = async (albumID) => {
+  try {
+    const deleted = await albumRepository.deleteById(albumID);
+
+    if (!deleted) {
+      throw ServiceError.notFound(`No album with id ${albumID} exists`, { albumID });
+    }  
+  } catch (error) {
+    throw handleDBError(error);
+  }
+};
+
 const addFotoToAlbum = async (albumID, fotoID) => {
   const albumFoto = await albumFotoService.create(albumID, fotoID);
   return albumFoto;
@@ -69,9 +81,9 @@ const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => 
   return newAlbum;
 }
 
-// tussentabel raadplegen get all by FK albumID in fotoalbum_foto
+// query table-joins in repo laag om alle fotos op albumID terug te geven mbv tussentabel
 const getAlbumImages = async(albumID) => {
-  const items = await albumFotoService.getAllByAlbumId(albumID);
+  const items = await albumRepository.getImagesByAlbumId(albumID);
   return {
     items,
     count: items.length,
@@ -101,4 +113,5 @@ module.exports = {
   addFotoToAlbum,
   createAndAddFoto,
   getAlbumImages,
+  deleteById,
 };

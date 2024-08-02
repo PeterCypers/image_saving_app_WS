@@ -24,10 +24,17 @@ getAlbumById.validationScheme = {
   }),
 };
 
-// TODO:
-const deleteAlbum = async (ctx) => {
-  await fotoService.deleteById(ctx.params.id);
+const deleteAlbumById = async (ctx) => {
+  //const { userID } = ctx.state.session;
+  const albumID = Number(ctx.params.albumID);
+
+  await albumService.deleteById(albumID);
   ctx.status = 204;
+};
+deleteAlbumById.validationScheme = {
+  params: Joi.object({
+    albumID: Joi.number().integer().positive(),
+  }),
 };
 
 //spread operator verzamelt alle properties en stelt ze gelijk aan zichzelf ~ zie obj.destru.
@@ -148,7 +155,7 @@ module.exports = (app) => {
 
   //todo  (not urgent)
   //router.put('/:albumID', updateAlbumName);
-  //router.delete('/:albumID', deleteById); // delete an album by id
+  router.delete('/:albumID', validate(deleteAlbumById.validationScheme), deleteAlbumById); // delete an album by id
   //router.delete('/:albumID/images/:imageID', removeImageFromAlbum) // removes an image from an album
 
   app.use(router.routes()).use(router.allowedMethods());

@@ -7,11 +7,6 @@ const getByAlbumIdFotoId = async(albumID, fotoID) => {
   return albumFoto;
 }
 
-const getAllByAlbumId = async(albumID) => {
-  const albumFotos = await albumFotoRepository.findAllByAlbumID(albumID);
-  return albumFotos;
-}
-
 const create = async(albumID, fotoID) => {
   const existingFoto = await getByAlbumIdFotoId(albumID, fotoID);
 
@@ -25,5 +20,4 @@ const create = async(albumID, fotoID) => {
 module.exports = {
   getByAlbumIdFotoId,
   create,
-  getAllByAlbumId,
 }

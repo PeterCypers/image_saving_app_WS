@@ -1,7 +1,6 @@
 const { getLogger } = require('../core/logging');
 const { tables, getKnex } = require('../data/index');
 
-//TODO work away unnecesary async-await-> low prio
 const findAlbumFoto = async (albumID, fotoID) => {
   const albumFoto = await getKnex()(tables.fotoalbum_foto)
   .where({fotoID, albumID}).first();
@@ -9,6 +8,7 @@ const findAlbumFoto = async (albumID, fotoID) => {
   return albumFoto;
 }
 
+// niet meer gebruikt: returns alle records tussentabel op albumID -> joins nodig, zie albumservice & repository
 const findAllByAlbumID = async (albumID) => {
   getLogger().info('Querying fotos by album id', { albumID });
   const albumFotos = await getKnex()(tables.fotoalbum_foto).where('albumID', albumID);
@@ -39,5 +39,5 @@ const create = async(albumID, fotoID) => {
 module.exports = {
   create,
   findAlbumFoto,
-  findAllByAlbumID
+  //findAllByAlbumID
 }
