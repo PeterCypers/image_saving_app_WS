@@ -119,6 +119,17 @@ getAlbumImages.validationScheme = {
   }),
 };
 
+const removeImageFromAlbum = async (ctx) => {
+  await albumService.removeFotoFromAlbum(Number(ctx.params.albumID), Number(ctx.params.imageID));
+  ctx.status = 204;
+}
+removeImageFromAlbum.validationScheme = {
+  params: Joi.object({
+    albumID: Joi.number().integer().positive(),
+    imageID: Joi.number().integer().positive(),
+  }),
+};
+
 
 /**
  * Install foto routes in the given router.
@@ -156,7 +167,7 @@ module.exports = (app) => {
   //todo  (not urgent)
   //router.put('/:albumID', updateAlbumName);
   router.delete('/:albumID', validate(deleteAlbumById.validationScheme), deleteAlbumById); // delete an album by id
-  //router.delete('/:albumID/images/:imageID', removeImageFromAlbum) // removes an image from an album
+  router.delete('/:albumID/images/:imageID', removeImageFromAlbum) // removes an image from an album
 
   app.use(router.routes()).use(router.allowedMethods());
 

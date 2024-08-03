@@ -17,7 +17,20 @@ const create = async(albumID, fotoID) => {
   return await getByAlbumIdFotoId(albumID, fotoID);
 }
 
+const removeFotoFromAlbum = async(albumID, fotoID) => {
+  try {
+    const deleted = await albumFotoRepository.deleteByAlbumIdFotoId(albumID, fotoID);
+
+    if (!deleted) {
+      throw ServiceError.notFound(`No album-foto with albumID ${albumID}, fotoID ${fotoID} exists`, { albumID, fotoID });
+    }  
+  } catch (error) {
+    throw handleDBError(error);
+  }
+}
+
 module.exports = {
   getByAlbumIdFotoId,
   create,
+  removeFotoFromAlbum,
 }

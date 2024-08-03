@@ -61,6 +61,9 @@ const addFotoToAlbum = async (albumID, fotoID) => {
   return albumFoto;
 }
 
+const removeFotoFromAlbum = async (albumID, fotoID) => {
+  await albumFotoService.removeFotoFromAlbum(albumID, fotoID); // errors handled in albumFotoService
+}
 
 const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => {
 
@@ -114,4 +117,5 @@ module.exports = {
   createAndAddFoto,
   getAlbumImages,
   deleteById,
+  removeFotoFromAlbum,
 };
