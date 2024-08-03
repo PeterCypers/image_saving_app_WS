@@ -3,21 +3,68 @@ const { tables, getKnex } = require('../data/index');
 
 // get all albums will always give albums by userID
 // standard order by creation date oldest to newest
-const findAll = (userID) => {
-  getLogger().info('Querying albums by User Id', { userID });
-  return getKnex()(tables.fotoalbum).where('userID', userID).orderBy('creationDate');
+const findAll = async (userID) => {
+  try {
+    getLogger().info('Querying albums by User Id', { userID });
+    
+    return await getKnex()(tables.fotoalbum)
+      .where('userID', userID)
+      .orderBy('creationDate');
+  } catch (error) {
+    getLogger().error('Error in findAll', { error });
+    throw error;
+  }
 };
 
-const findById = (albumID) => {
-  getLogger().info('Querying album by id', { albumID });
-  return getKnex()(tables.fotoalbum).where('albumID', albumID).first();
+const findById = async (albumID) => {
+  try {
+    getLogger().info('Querying album by id', { albumID });
+
+    return await getKnex()(tables.fotoalbum)
+      .where('albumID', albumID)
+      .first();
+  } catch (error) {
+    getLogger().error('Error in findById', { error });
+    throw error;
+  }
+
 };
 
 // rule: album name unique by user
-const findByNameAndUserID = (albumName, userID) => {
-  getLogger().info('Querying album by name and userID', { albumName, userID });
-  return getKnex()(tables.fotoalbum).where('albumName', albumName).andWhere('userID', userID).first();
+const findByNameAndUserID = async (albumName, userID) => {
+  try {
+    getLogger().info('Querying album by name and userID', { albumName, userID });
+
+    return await getKnex()(tables.fotoalbum)
+      .where('albumName', albumName)
+      .andWhere('userID', userID)
+      .first();
+  } catch (error) {
+    getLogger().error('Error in findByNameAndUserID', { error });
+    throw error;
+  }
+
 }
+
+// hoort mogelijks thuis in fotos pad?
+const getImagesByAlbumId = async (albumID) => {
+  try {
+    getLogger().info('Querying all fotos by albumID joining fotoalbum_foto with foto', { albumID });
+
+    return await getKnex()(tables.fotoalbum_foto)
+      .join(tables.foto, `${tables.fotoalbum_foto}.fotoID`, '=', `${tables.foto}.fotoID`)
+      .where(`${tables.fotoalbum_foto}.albumID`, albumID)
+      .select(
+        `${tables.foto}.fotoID`,
+        `${tables.foto}.location`,
+        `${tables.foto}.dateUploaded`
+      )
+      .orderBy(`${tables.foto}.dateUploaded`, 'asc');
+  } catch (error) {
+    getLogger().error('Error in getImagesByAlbumId', { error });
+    throw error;
+  }
+};
 
 /**
  * Create a new foto with the given `albumName` and `creationDate` and `userID`.
@@ -74,4 +121,6 @@ module.exports = {
   findById,
   create,
   findByNameAndUserID,
+  getImagesByAlbumId, 
+  deleteById,
 }

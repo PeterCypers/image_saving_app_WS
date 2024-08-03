@@ -44,11 +44,26 @@ const create = async ({ albumName, creationDate, userID }) => {
   }
 };
 
+const deleteById = async (albumID) => {
+  try {
+    const deleted = await albumRepository.deleteById(albumID);
+
+    if (!deleted) {
+      throw ServiceError.notFound(`No album with id ${albumID} exists`, { albumID });
+    }  
+  } catch (error) {
+    throw handleDBError(error);
+  }
+};
+
 const addFotoToAlbum = async (albumID, fotoID) => {
   const albumFoto = await albumFotoService.create(albumID, fotoID);
   return albumFoto;
 }
 
+const removeFotoFromAlbum = async (albumID, fotoID) => {
+  await albumFotoService.removeFotoFromAlbum(albumID, fotoID); // errors handled in albumFotoService
+}
 
 const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => {
 
@@ -67,6 +82,15 @@ const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => 
   const albumFoto = await albumFotoService.create(albumID, fotoID); // not sure if this needs returning...
 
   return newAlbum;
+}
+
+// query table-joins in repo laag om alle fotos op albumID terug te geven mbv tussentabel
+const getAlbumImages = async(albumID) => {
+  const items = await albumRepository.getImagesByAlbumId(albumID);
+  return {
+    items,
+    count: items.length,
+  };
 }
 
 function formatIsoString(isoString) {
@@ -91,4 +115,7 @@ module.exports = {
   create,
   addFotoToAlbum,
   createAndAddFoto,
+  getAlbumImages,
+  deleteById,
+  removeFotoFromAlbum,
 };
