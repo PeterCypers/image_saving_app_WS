@@ -62,6 +62,24 @@ createAlbum.validationScheme = {
   },
 };
 
+const updateAlbumName = async (ctx) => {
+  const { userID } = ctx.state.session;
+  const albumID = Number(ctx.params.albumID);
+  const { newName } = ctx.request.body;
+
+  const updatedAlbum = await albumService.updateAlbumName(albumID, userID, newName);
+  ctx.status = 200;
+  ctx.body = updatedAlbum;
+}
+updateAlbumName.validationScheme = {
+  params: Joi.object({
+    albumID: Joi.number().integer().positive().required(),
+  }),
+  body: Joi.object({
+    newName: Joi.string().max(25).required(),
+  }),
+};
+
 
 /**
  * 
@@ -155,7 +173,6 @@ module.exports = (app) => {
   // PUT /albums/{albumId}: Update the name of a specific album.
   // DELETE /albums/{albumId}/images/{imageId}: Remove a specific image from a specific album
 
-  //done
   router.get('/', validate(getAllAlbums.validationScheme), getAllAlbums); // get all albums for logged in user
   router.get('/:albumID', validate(getAlbumById.validationScheme), getAlbumById); // get one album by id for logged in user
   router.get('/:albumID/images', validate(getAlbumImages.validationScheme), getAlbumImages); //get all images by album
@@ -164,8 +181,8 @@ module.exports = (app) => {
   router.post('/:albumID/:imageID', validate(addFotoToAlbum.validationScheme), addFotoToAlbum); // add existing foto to existing album if it's not already added
   router.post('/create-and-add-photo', validate(createAlbumAndAddFoto.validationScheme), createAlbumAndAddFoto); // special request, combines createAlbum & addFotoToAlbum
 
-  //todo  (not urgent)
-  //router.put('/:albumID', updateAlbumName);
+  router.put('/:albumID', validate(updateAlbumName.validationScheme), updateAlbumName); // update an album by id
+  
   router.delete('/:albumID', validate(deleteAlbumById.validationScheme), deleteAlbumById); // delete an album by id
   router.delete('/:albumID/images/:imageID', removeImageFromAlbum) // removes an image from an album
 
