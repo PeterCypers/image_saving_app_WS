@@ -114,6 +114,20 @@ const deleteById = async (id) => {
   }
 };
 
+const updateById = async (albumID, newName) => {
+  try {
+    await getKnex()(tables.fotoalbum)
+      .update({albumName: newName})
+      .where('albumID', albumID);
+
+    return albumID;
+  } catch (error) {
+    getLogger().error('Error in updateById', {
+      error,
+    });
+    throw error;
+  }
+}
 
 module.exports = {
   findAll,
@@ -123,4 +137,5 @@ module.exports = {
   findByNameAndUserID,
   getImagesByAlbumId, 
   deleteById,
+  updateById,
 }

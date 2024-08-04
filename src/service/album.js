@@ -31,8 +31,14 @@ const getAllByUserId = async (userID) => {
 };
 
 
-// you can not create 2 albums with the same name -> handleDB error working
+// 1 user can't have 2 albums with same name -> no unique DB-table-row constraint on albumName -> 2 different users may have an album with the same name
 const create = async ({ albumName, creationDate, userID }) => {
+
+  const existingAlbum = await albumRepository.findByNameAndUserID(albumName, userID);
+  
+  if(existingAlbum){
+    throw ServiceError.validationFailed(`An album with name ${albumName} already exists`, { albumName });
+  }
   const formattedDate = formatIsoString(creationDate.toISOString());
 
   try {
@@ -43,6 +49,24 @@ const create = async ({ albumName, creationDate, userID }) => {
     throw handleDBError(error);
   }
 };
+
+const updateAlbumName = async (albumID, userID, newName) => {
+  
+  // nieuw gekozen naam mag nog niet bestaan (uniek voor deze user):
+  const existingAlbum = await albumRepository.findByNameAndUserID(newName, userID);
+
+  if(existingAlbum){
+    throw ServiceError.validationFailed(`An album with name ${newName} already exists`, { newName });
+  }
+
+  // update albumName
+  try {
+    await albumRepository.updateById(albumID, newName);
+    return getById(albumID, userID);
+  } catch (error) {
+    throw handleDBError(error);
+  }
+}
 
 const deleteById = async (albumID) => {
   try {
@@ -118,4 +142,5 @@ module.exports = {
   getAlbumImages,
   deleteById,
   removeFotoFromAlbum,
+  updateAlbumName,
 };
