@@ -27,7 +27,6 @@ module.exports = {
         // add new data to table:
         // userID | email | passwordHash | roles (all passwords are 12345678)
         // all stored hashes are different, however they all decode to the same p.w. -> n-runs of testpw.js
-        // TODO: adjust testdata
         await knex(tables.users).insert([
             { userID: 1, email: 'first.user@hotmail.com', passwordHash: '$argon2id$v=19$m=131072,t=6,p=4$jCb6jJS7xOhyEJKXyBpjlg$qipMaRR/WVc0agyhqx+ykDnmMYb7lWFlzKeIoXyCkbk', 
                 roles: JSON.stringify([Role.USER])
