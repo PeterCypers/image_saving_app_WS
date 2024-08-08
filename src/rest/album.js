@@ -164,14 +164,6 @@ module.exports = (app) => {
   //zelfde als bij elk request zetten, voor al deze endpoints moet de gebruiker ingelogd zijn
   router.use(requireAuthentication);
 
-  // GET /albums: Retrieve all albums for the logged-in user.
-  // GET /albums/{albumId}: Retrieve metadata for a specific album.
-  // GET /albums/{albumId}/images: Retrieve all images for a specific album.
-  // POST /albums: Create a new album.
-  // POST /albums/{albumId}/{imageId}: Add an image to an album.
-  // POST /albums/create-and-add-photo  -> special request, new albumname and fotoID in de body
-  // PUT /albums/{albumId}: Update the name of a specific album.
-  // DELETE /albums/{albumId}/images/{imageId}: Remove a specific image from a specific album
 
   router.get('/', validate(getAllAlbums.validationScheme), getAllAlbums); // get all albums for logged in user
   router.get('/:albumID', validate(getAlbumById.validationScheme), getAlbumById); // get one album by id for logged in user

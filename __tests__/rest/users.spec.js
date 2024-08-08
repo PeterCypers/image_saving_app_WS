@@ -1,6 +1,6 @@
-const { tables } = require("../../src/data")
-const { withServer, login, loginAdmin } = require("../supertest.setup")
-const { testAuthHeader } = require("../common/auth")
+const { tables } = require("../../src/data");
+const { withServer, login, loginAdmin } = require("../supertest.setup");
+const { testAuthHeader } = require("../common/auth");
 
 //userdata in global setup/teardown
 
@@ -73,7 +73,7 @@ describe("Users", () => {
     it("should 400 when password length too short", async () => {
       const response = await request.post(`${url}/register`).send({
           email: "register@hogent.be",
-          password: "1234567", //abcdefghijklmnopqrstuvwxyz12345
+          password: "1234567",
       })
 
       expect(response.statusCode).toBe(400);
@@ -124,7 +124,6 @@ describe("Users", () => {
       expect(response.body.user.roles).toHaveLength(2); // "user" rol & "admin" rol
     })
 
-    //no pswd, no email, wrong pasword
     it("should 400 when missing email", async () => {
       const response = await request.post(`${url}/login`).send({
           // email: "test.user@hogent.be",
@@ -191,7 +190,7 @@ describe("Users", () => {
         expect(response.body.details.query).toHaveProperty("invalid");
     })
 
-    testAuthHeader(() => request.get(url))
+    testAuthHeader(() => request.get(url));
   })
 
   describe(`GET ${url}/:id`, () => {
@@ -225,8 +224,9 @@ describe("Users", () => {
       expect(response.body.message).toBe("You are not allowed to view this user's information");
     })
 
+    testAuthHeader(() => request.get(`${url}/1`));
   })
 
-  //describe PUT nvt in mijn applicatie
-  //describe DELETE nvt in mijn applicatie
+  //describe [users] PUT nvt in mijn applicatie
+  //describe [users] DELETE nvt in mijn applicatie
 })

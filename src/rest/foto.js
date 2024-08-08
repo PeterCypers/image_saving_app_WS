@@ -33,7 +33,7 @@ getAllFotos.validationScheme = null;
 
 const getFotoById = async (ctx) => {
   const { userID } = ctx.state.session;
-  ctx.body = await fotoService.getById(Number(ctx.params.fotoID), userID);
+  ctx.body = await fotoService.getById(Number(ctx.params.id), userID);
 };
 getFotoById.validationScheme = {
   params: Joi.object({
@@ -46,7 +46,7 @@ const deleteFoto = async (ctx) => {
   const fotoID = Number(ctx.params.id);
   const { userID } = ctx.state.session;
 
-  try {
+  // try {
     const fotoRecord = await fotoService.getById(fotoID, userID);
 
     const fileUrl = fotoRecord.location;
@@ -55,9 +55,11 @@ const deleteFoto = async (ctx) => {
       const uploadsDirectory = path.join(__dirname, '..', '..', 'public', 'uploads');
       deleteFileFromSystem(fileUrl, uploadsDirectory);
     }
-  } catch (error) {
-    logger.error('Error saving file:', error);
-  }
+  // } catch (error) {
+  //   logger.error('Error deleting file:', error);
+  // }
+  // bovenstaande try-catch mag niet -> de thrown en un-handled error in de service laag zorgt dat de error teruggestuurd wordt in de 
+  // body en de file niet gedelete wordt -> met try-catch -> gebruiker 1 kan de fotos van gebruiker 2 deleten...
   await fotoService.deleteById(fotoID);
   ctx.status = 204;
 };
