@@ -68,7 +68,10 @@ const updateAlbumName = async (albumID, userID, newName) => {
   }
 }
 
-const deleteById = async (albumID) => {
+const deleteById = async (albumID, userID) => {
+
+  const album = await getById(albumID, userID); //Idem als vorige 'tijdens test gevonden fout' -> deze lijn voorkomt dat je een andere user zijn album kan deleten
+
   try {
     const deleted = await albumRepository.deleteById(albumID);
 
@@ -85,7 +88,10 @@ const addFotoToAlbum = async (albumID, fotoID) => {
   return albumFoto;
 }
 
-const removeFotoFromAlbum = async (albumID, fotoID) => {
+const removeFotoFromAlbum = async (albumID, fotoID, userID) => {
+  //controlleer of de album tot deze gebruiker behoort
+  const album = await getById(albumID, userID);
+
   await albumFotoService.removeFotoFromAlbum(albumID, fotoID); // errors handled in albumFotoService
 }
 
@@ -109,7 +115,12 @@ const createAndAddFoto = async ({ albumName, fotoID, creationDate, userID }) => 
 }
 
 // query table-joins in repo laag om alle fotos op albumID terug te geven mbv tussentabel
-const getAlbumImages = async(albumID) => {
+const getAlbumImages = async(albumID, userID) => {
+  //controle toegevoegd om te voorkomen dat je een andere user's album-fotos kan ophalen(fout gevonden tijdens testing...)
+  // -> deze album gaan we niet gebruiken maar de function call zal een error gooien als de album niet toehoort aan deze user
+  //(en generic error message anti-hacking)
+  const album = await getById(albumID, userID); 
+
   const items = await albumRepository.getImagesByAlbumId(albumID);
   return {
     items,

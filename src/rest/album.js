@@ -25,10 +25,10 @@ getAlbumById.validationScheme = {
 };
 
 const deleteAlbumById = async (ctx) => {
-  //const { userID } = ctx.state.session;
+  const { userID } = ctx.state.session;
   const albumID = Number(ctx.params.albumID);
 
-  await albumService.deleteById(albumID);
+  await albumService.deleteById(albumID, userID);
   ctx.status = 204;
 };
 deleteAlbumById.validationScheme = {
@@ -58,7 +58,7 @@ const createAlbum = async (ctx) => {
 }
 createAlbum.validationScheme = {
   body: {
-    albumName: Joi.string().max(25),
+    albumName: Joi.string().trim().min(1).max(25), //trim zorgt ervoor dat het ook niet enkel spaties en tabs bevat -> err message zal ook herkennen dat het empty is
   },
 };
 
@@ -73,10 +73,10 @@ const updateAlbumName = async (ctx) => {
 }
 updateAlbumName.validationScheme = {
   params: Joi.object({
-    albumID: Joi.number().integer().positive().required(),
+    albumID: Joi.number().integer().positive().required(), //technisch gezien hoeft dit niet: afgehandeld in src/core/validation.js.JOI_OPTIONS.presence
   }),
   body: Joi.object({
-    newName: Joi.string().max(25).required(),
+    newName: Joi.string().trim().min(1).max(25).required(), //idem
   }),
 };
 
@@ -104,7 +104,7 @@ const createAlbumAndAddFoto = async (ctx) => {
 }
 createAlbumAndAddFoto.validationScheme = {
   body: {
-    albumName: Joi.string().min(1).max(25),
+    albumName: Joi.string().trim().min(1).max(25), //zonder trim: fout ontdekt bij testing
     fotoID: Joi.number().integer().positive(),
   },
 };
@@ -129,7 +129,8 @@ addFotoToAlbum.validationScheme = {
 };
 
 const getAlbumImages = async (ctx) => {
-  ctx.body = await albumService.getAlbumImages(Number(ctx.params.albumID));
+  const { userID } = ctx.state.session;
+  ctx.body = await albumService.getAlbumImages(Number(ctx.params.albumID), userID);
 }
 getAlbumImages.validationScheme = {
   params: Joi.object({
@@ -138,7 +139,8 @@ getAlbumImages.validationScheme = {
 };
 
 const removeImageFromAlbum = async (ctx) => {
-  await albumService.removeFotoFromAlbum(Number(ctx.params.albumID), Number(ctx.params.imageID));
+  const { userID } = ctx.state.session; //weeral geen rekening met deze case gehouden: verwijderen van een andere gebruikers image in album -> userID-check nodig
+  await albumService.removeFotoFromAlbum(Number(ctx.params.albumID), Number(ctx.params.imageID), userID);
   ctx.status = 204;
 }
 removeImageFromAlbum.validationScheme = {
@@ -164,14 +166,6 @@ module.exports = (app) => {
   //zelfde als bij elk request zetten, voor al deze endpoints moet de gebruiker ingelogd zijn
   router.use(requireAuthentication);
 
-  // GET /albums: Retrieve all albums for the logged-in user.
-  // GET /albums/{albumId}: Retrieve metadata for a specific album.
-  // GET /albums/{albumId}/images: Retrieve all images for a specific album.
-  // POST /albums: Create a new album.
-  // POST /albums/{albumId}/{imageId}: Add an image to an album.
-  // POST /albums/create-and-add-photo  -> special request, new albumname and fotoID in de body
-  // PUT /albums/{albumId}: Update the name of a specific album.
-  // DELETE /albums/{albumId}/images/{imageId}: Remove a specific image from a specific album
 
   router.get('/', validate(getAllAlbums.validationScheme), getAllAlbums); // get all albums for logged in user
   router.get('/:albumID', validate(getAlbumById.validationScheme), getAlbumById); // get one album by id for logged in user
