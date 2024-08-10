@@ -94,19 +94,19 @@ let PLACES = [
     albums: [{
       albumID: 1,
       albumName: "full album",
-      creationDate: null,
+      creationDate: new Date(2021, 0, 0, 0, 0),
       userID: 1
     },
     {
       albumID: 2,
       albumName: "half-full album",
-      creationDate: null,
+      creationDate: new Date(2021, 1, 1, 1, 1),
       userID: 1
     },
     {
       albumID: 3,
       albumName: "empty album",
-      creationDate: null,
+      creationDate: new Date(2021, 2, 2, 2, 2),
       userID: 1
     }],
     album_fotos: [{
