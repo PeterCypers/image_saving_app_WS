@@ -1,6 +1,6 @@
-const placeRepository = require('../repository/place');
-const ServiceError = require('../core/serviceError');
-const handleDBError = require('./_handleDBError');
+const placeRepository = require('./repo-place');
+const ServiceError = require('../src/core/serviceError');
+const handleDBError = require('../src/service/_handleDBError');
 
 const getAll = async () => {
   const items = await placeRepository.findAll();
