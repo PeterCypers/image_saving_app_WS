@@ -9,8 +9,6 @@
   - <https://github.com/Web-IV/2324-webservices-PeterCypers>
   - <LINK_ONLINE_VERSIE_HIER>
 
-online link: TODO
-
 **Logingegevens**
 
 - E-mailadres: first.user@hotmail.com
@@ -19,11 +17,11 @@ online link: TODO
 
 Alle gebruikers hebben hetzelfde wachtwoord, de eerste 5 gebruikers volgen hetzelfde patroon voor login email. (first, second, ...)
 
-De 2de gebruiker heeft al fotos en albums in zijn account. (second.user@hotmail.com)
+De 2de gebruiker heeft al foto's en albums in zijn account. (second.user@hotmail.com)
 
 ## Projectbeschrijving
 
-Met deze applicatie kunnen gebruikers zich registreren/aanmelden en fotos uploaden en bewaren, ze kunnen ook verzamelingen van fotos aanmaken en bijhouden. 
+Met deze applicatie kunnen gebruikers zich registreren/aanmelden en foto's uploaden en bewaren, ze kunnen ook verzamelingen van foto's aanmaken en bijhouden. 
 
 Uiteindelijk kunnen ze ook die verzamelingen beheren door ze van naam te veranderen, of verwijderen.
 
@@ -52,7 +50,7 @@ Uiteindelijk kunnen ze ook die verzamelingen beheren door ze van naam te verande
 
 ### Fotos
 
-- `GET /api/fotos`: alle fotos(*) ophalen
+- `GET /api/fotos`: alle foto's(*) ophalen
 - `GET /api/fotos/:id`: foto(*) ophalen op id
 - `POST /api/fotos/save`: nieuwe foto(*) uploaden en persisteren op de back-end
 - `DELETE /api/fotos/:id`: foto(*) verwijderen op id
@@ -124,7 +122,7 @@ Uiteindelijk kunnen ze ook die verzamelingen beheren door ze van naam te verande
 - **repositorylaag**
 
   - [x] definieert één repository per entiteit (niet voor tussentabellen) - indien van toepassing
-  - [ ] mapt OO-rijke data naar relationele tabellen en vice versa - indien van toepassing
+  - [x] mapt OO-rijke data naar relationele tabellen en vice versa - indien van toepassing
 <br />
 
 - **servicelaag met een zekere complexiteit**
@@ -206,7 +204,7 @@ Features (onder anderen):
 - multipart/form-data
 - file uploads
 
-(*) De overwegende factor die me heeft overtuigd om deze package te gebruiken was dat ik multer niet terugvond op de koa webpage en dat deze in het oog sprong met de korte en to-the-point naamgeven en dat die als eerste in de lijst van bodyparsers voorkwam.
+(*) De overwegende factor dat me heeft overtuigd om de koa-body package te gebruiken was dat ik multer niet terugvond op de koa webpage en dat koa-body als naam beter klinkt en ook dat die als eerste in de lijst van bodyparsers voorkwam.
 
 ### Front-end Web Development
 
@@ -231,7 +229,7 @@ Om files te versturen met http requests heb je iets extra nodig, [FormData](http
 
 ### Web Services
 
-Ik heb getest op de normale verwachte verloop op elke endpoint en zo veel mogelijk verkeerde scenarios en alternative verlopen. Alsook controles uitgevoerd op de correctheid van de returnvalues en status codes en/of errors.
+Ik heb getest op het normaal verwachte verloop op elke endpoint en zoveel mogelijk verkeerde scenarios en alternative verlopen. Ook heb ik controles uitgevoerd op de correctheid van de returnvalues en status codes en/of errors.
 
 ![tests and coverage](./docs-assets/test-coverage.png)
 
@@ -242,7 +240,7 @@ Ik heb getest op de normale verwachte verloop op elke endpoint en zo veel mogeli
 - Een error in login wordt ook getoond op register als je naar register gaat.
 - Er is een bepaalde feedback msg (err|success) die soms niet te zien is bij nieuwe album aanmaken + foto toevoegen.
 - Er is een success message feedback binnen het upload component die te vroeg verschijnt (ik heb die tevergeefs proberen overschrijven).
-- Ik heb een static-assets folder moeten aanmaken die de website favicon bijhoud omdat die niet werd herkend als import uit de public folder. De import gebeurt in de index.html
+- Ik heb een static-assets folder moeten aanmaken dat de website favicon bijhoud omdat dit niet werd herkend als import uit de public folder. De import gebeurt in de index.html
 
 ### Web Services
 
@@ -279,18 +277,20 @@ Ik heb getest op de normale verwachte verloop op elke endpoint en zo veel mogeli
 
 - Andere style framework/component UI uitproberen: Tailwind.
 
-- Linting onderzoeken.
-
 - Verschillende soorten popups(components) gebruiken.
 
 - Meerdere files tegelijk proberen behandelen.
 
 ### Web Services
 
-- Prisma ORM tool onderzoeken en leren gebruiken
+- Prisma ORM tool onderzoeken en leren gebruiken.
 
 ### Algemeen
 
 - Image naam ook opnemen in de databank zodat ik daar iets op de front end mee kan doen (bvb een img title, rename, etc.).
 
-- Typescript leren gebruiken
+- Testen leren maken met formdata objecten. (FE+BE)
+
+- Linting onderzoeken.
+
+- Typescript leren gebruiken.
