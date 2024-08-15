@@ -59,9 +59,9 @@ const saveFileToSystem = (fotoFile, userID, baseDir) => {
     let fileUrl = `${protocol}://${hostname}`;
 
     // Include the port if it's a non-standard port (e.g., not 80 for HTTP or 443 for HTTPS)
-    if (port && (protocol !== 'http' || port !== '80') && (protocol !== 'https' || port !== '443')) {
-      fileUrl += `:${port}`;
-    }
+    // if (port && (protocol !== 'http' || port !== '80') && (protocol !== 'https' || port !== '443')) {
+    //   fileUrl += `:${port}`;
+    // }
 
     fileUrl += relativePath;
 
