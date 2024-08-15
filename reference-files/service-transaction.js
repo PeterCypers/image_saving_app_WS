@@ -1,7 +1,7 @@
-const transactionRepository = require('../repository/transaction');
+const transactionRepository = require('./repo-transaction');
 const placeService = require('./place');
-const ServiceError = require('../core/serviceError');
-const handleDBError = require('./_handleDBError');
+const ServiceError = require('../src/core/serviceError');
+const handleDBError = require('../src/service/_handleDBError');
 
 const getAll = async (userId) => {
   const items = await transactionRepository.findAll(userId);

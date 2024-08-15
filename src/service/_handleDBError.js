@@ -1,4 +1,4 @@
-// TODO: aanpassen naar eigen code, nodig? mischien bij toevoegen van een nieuwe album, de DB kan een error geven op constraint albumName=unique
+//bij toevoegen van een nieuwe album, de DB kan een error geven op constraint albumName=unique
 const ServiceError = require('../core/serviceError');
 
 const handleDBError = (error) => {

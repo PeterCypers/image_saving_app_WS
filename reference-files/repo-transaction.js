@@ -1,5 +1,5 @@
-const { getLogger } = require('../core/logging');
-const { tables, getKnex } = require('../data/index');
+const { getLogger } = require('../src/core/logging');
+const { tables, getKnex } = require('../src/data/index');
 
 const formatTransaction = ({
   place_id,

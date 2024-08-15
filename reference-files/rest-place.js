@@ -1,8 +1,8 @@
 const Router = require('@koa/router');
 const Joi = require('joi');
-const placeService = require('../service/place');
-const validate = require('../core/validation');
-const { requireAuthentication } = require('../core/auth');
+const placeService = require('./service-place');
+const validate = require('../src/core/validation');
+const { requireAuthentication } = require('../src/core/auth');
 
 const getAllPlaces = async (ctx) => {
   ctx.body = await placeService.getAll();

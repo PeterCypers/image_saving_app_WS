@@ -60,16 +60,7 @@ describe("Albums", () => {
     testAuthHeader(() => request.get(url));
   })
 
-  /** TODO endpoints:
-   * - get('/:albumID' ✓
-   * - get('/:albumID/images' ✓
-   * - post('/'               ✓
-   * - post('/:albumID/:imageID' ✓
-   * - post('/create-and-add-photo' ✓
-   * - put('/:albumID' ✓
-   * - delete('/:albumID' ✓
-   * - delete('/:albumID/images/:imageID'
-   */
+
   describe(`GET ${url}/:albumID`, () => {
 
     setupAndTearDown();

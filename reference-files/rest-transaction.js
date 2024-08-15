@@ -1,8 +1,8 @@
 const Router = require('@koa/router');
 const Joi = require('joi');
-const validate = require('../core/validation');
-const { requireAuthentication } = require('../core/auth');
-const transactionService = require('../service/transaction');
+const validate = require('../src/core/validation');
+const { requireAuthentication } = require('../src/core/auth');
+const transactionService = require('../src/service/transaction');
 
 const getAllTransactions = async (ctx) => {
   const { userId } = ctx.state.session;
