@@ -126,4 +126,4 @@ dist
 .pnp.*
 
 # Ignore all contents of the 'public' directory
-/public/*
+/public/uploads/*
