@@ -188,7 +188,7 @@ Atom < Molecule < Organism < Template < Page
 
 ## Extra technologie
 
-Werken met files zowel F.E. als B.E. is mijn extra technologie.
+Werken met files zowel F-E als B-E is mijn extra technologie.
 
 ### <u>Keuze van package:</u>
 
@@ -221,11 +221,13 @@ Om files te versturen met http requests heb je iets extra nodig, [FormData](http
 
 ## Testresultaten
 
+Zie de readme's voor het runnen van de tests.
+
 ### Front-end Web Development
 
-> Schrijf hier een korte oplijsting en beschrijving van de geschreven testen
+Ik heb gekozen om per route tests te schrijven, ik heb enkel tests gemaakt voor de /fotos route. Een serieuze moeilijkheidsgraad komt erbij als ik ook de dropzone zou willen testen. Zie future expansions. Mits de tijd het zou toelaten zou ik alle hoofdroutes willen testen...Ik heb verschillende fouten teruggevonden door tests te schrijven, vele fouten zijn ook gesneuveld, sommige blijven bestaan.
 
-- TODO
+In de front-end zijn het vooral error messages die wat blijven plakken, of niet op het scherm leesbaar zijn, normaal gezien niets ernstig, er zouden geen crashes moeten gebeuren.
 
 ### Web Services
 
@@ -240,7 +242,7 @@ Ik heb getest op het normaal verwachte verloop op elke endpoint en zoveel mogeli
 - Een error in login wordt ook getoond op register als je naar register gaat.
 - Er is een bepaalde feedback msg (err|success) die soms niet te zien is bij nieuwe album aanmaken + foto toevoegen.
 - Er is een success message feedback binnen het upload component die te vroeg verschijnt (ik heb die tevergeefs proberen overschrijven).
-- Ik heb een static-assets folder moeten aanmaken dat de website favicon bijhoud omdat dit niet werd herkend als import uit de public folder. De import gebeurt in de index.html
+- Ik heb een static-assets folder moeten aanmaken dat de website favicon bijhoud omdat dit niet werd herkend als import uit de public folder. De import gebeurt in de index.html.
 
 ### Web Services
 
