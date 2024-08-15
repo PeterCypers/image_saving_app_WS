@@ -1,6 +1,7 @@
 const fotoRepository = require('../repository/foto');
 const ServiceError = require('../core/serviceError');
 const handleDBError = require('./_handleDBError');
+const config = require('config');
 /**  findAll,
   findById,
   create,
@@ -82,7 +83,8 @@ function formatIsoString(isoString) {
 const deleteFileFromSystem = (fileUrl, baseDir) => {
   try {
     // Construct the file path from the URL
-    const filePath = path.join(baseDir, fileUrl.replace(/^http:\/\/localhost:9000/, ''));
+    const port = config.get('port');
+    const filePath = path.join(baseDir, fileUrl.replace(new RegExp(`^http:\/\/localhost:${port}`), ''));
 
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
