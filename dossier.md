@@ -4,10 +4,10 @@
 
 - [x] Front-end Web Development
   - <https://github.com/Web-IV/2324-frontendweb-PeterCypers>
-  - <LINK_ONLINE_VERSIE_HIER>
+  - <https://peter-cypers-images-project.onrender.com>
 - [x] Web Services:
   - <https://github.com/Web-IV/2324-webservices-PeterCypers>
-  - <LINK_ONLINE_VERSIE_HIER>
+  - <https://peter-cypers-images-project.onrender.com>
 
 **Logingegevens**
 
