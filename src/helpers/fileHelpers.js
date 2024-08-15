@@ -48,7 +48,7 @@ const saveFileToSystem = (fotoFile, userID, baseDir) => {
     //TODO: might change when website goes online
     // Construct the complete URL
     const port = config.get('port');
-    const fileUrl = `https://localhost:${port}${relativePath}`;
+    const fileUrl = `http://localhost:${port}${relativePath}`;
 
     logger.info(`File saved successfully: ${originalName}`);
     logger.info(`User ID: ${userID}`);
