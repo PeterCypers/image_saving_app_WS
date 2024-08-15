@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { getLogger } = require('../core/logging');
+const config = require('config');
 
 
 /**
@@ -40,7 +41,8 @@ const saveFileToSystem = (fotoFile, userID, baseDir) => {
 
     //TODO: might change when website goes online
     // Construct the complete URL
-    const fileUrl = `http://localhost:9000${relativePath}`;
+    const port = config.get('port');
+    const fileUrl = `http://localhost:${port}${relativePath}`;
 
     logger.info(`File saved successfully: ${originalName}`);
     logger.info(`User ID: ${userID}`);
@@ -64,7 +66,8 @@ const deleteFileFromSystem = (fileUrl, baseDir) => {
   const logger = getLogger();
   try {
     // Construct the file path from the URL
-    const filePath = path.join(baseDir, fileUrl.replace(/^http:\/\/localhost:9000/, ''));
+    const port = config.get('port');
+    const filePath = path.join(baseDir, fileUrl.replace(new RegExp(`^http:\/\/localhost:${port}`), ''));
 
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
