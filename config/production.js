@@ -4,7 +4,7 @@ module.exports = {
         disabled:false
     },
     cors: {
-      origins: ['http://localhost:5173'],
+      origins: ['https://peter-cypers-images-project.onrender.com'],
       maxAge: 3 * 60 * 60,
     },
     database: {

@@ -67,7 +67,7 @@ const deleteFileFromSystem = (fileUrl, baseDir) => {
   try {
     // Construct the file path from the URL
     const port = config.get('port');
-    const filePath = path.join(baseDir, fileUrl.replace(new RegExp(`^http:\/\/localhost:${port}`), ''));
+    const filePath = path.join(baseDir, fileUrl.replace(new RegExp(`^https?:\/\/localhost:${port}`), ''));
 
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
