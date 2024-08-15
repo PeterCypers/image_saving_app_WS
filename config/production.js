@@ -1,6 +1,4 @@
 module.exports = {
-    protocol: "https",
-    hostname: "peter-cypers-images-project.onrender.com",
     logging : {
         level:"info",
         disabled:false

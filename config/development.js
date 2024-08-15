@@ -1,6 +1,4 @@
 module.exports = {
-    protocol: "http",
-    hostname: "localhost",
     port: 9000,
     logging : {
         level:"silly",

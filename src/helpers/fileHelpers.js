@@ -47,23 +47,8 @@ const saveFileToSystem = (fotoFile, userID, baseDir) => {
 
     //TODO: might change when website goes online
     // Construct the complete URL
-    // const port = config.get('port');
-    // const fileUrl = `https://localhost:${port}${relativePath}`;
-
-    // Get the correct protocol and base URL based on the environment
-    const protocol = config.get('protocol'); // Add 'protocol' to your config, e.g., 'http' for development, 'https' for production
-    const hostname = config.get('hostname'); // Add 'hostname' to your config, e.g., 'localhost' for development, your domain for production
-    const port = config.get('port'); // Port number if required
-
-    // Construct the complete URL
-    let fileUrl = `${protocol}://${hostname}`;
-
-    // Include the port if it's a non-standard port (e.g., not 80 for HTTP or 443 for HTTPS)
-    // if (port && (protocol !== 'http' || port !== '80') && (protocol !== 'https' || port !== '443')) {
-    //   fileUrl += `:${port}`;
-    // }
-
-    fileUrl += relativePath;
+    const port = config.get('port');
+    const fileUrl = `https://localhost:${port}${relativePath}`;
 
     logger.info(`File saved successfully: ${originalName}`);
     logger.info(`User ID: ${userID}`);
