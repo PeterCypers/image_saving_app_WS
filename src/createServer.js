@@ -35,10 +35,12 @@ module.exports = async function createServer() {
         return app;
     },
     start() {
-        return new Promise((resolve) => {
-            app.listen(9000, () => {getLogger().info(`🚀 server is running at http://localhost:9000`)});
-            resolve();
-        })
+      return new Promise((resolve) => {
+        const port = config.get('port');
+        app.listen(port);
+        getLogger().info(`🚀 Server listening on http://localhost:${port}`);
+        resolve();
+      });
     },
     async stop(){
         app.removeAllListeners();

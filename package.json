@@ -47,5 +47,10 @@
     "ext": "js,json",
     "legacyWatch": true,
     "exec": "node --inspect=0.0.0.0:9001 --trace-warnings src/index.js"
+  },
+  "engines": {
+    "npm": ">=9.8.0",
+    "node": ">=20.6.0",
+    "yarn": ">=1.22.0"
   }
 }

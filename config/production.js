@@ -7,7 +7,14 @@ module.exports = {
       origins: ['http://localhost:5173'],
       maxAge: 3 * 60 * 60,
     },
-    // TODO database -> production db = de gekregen DB
+    database: {
+      client: 'mysql2',
+      host: 'vichogent.be',
+      port: 40043,
+      name: '185333pc',
+      username: 'root',
+      password: '',
+    },
     auth: {
       argon: {
         saltLength: 16,

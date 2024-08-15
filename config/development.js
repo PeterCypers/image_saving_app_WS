@@ -1,4 +1,5 @@
 module.exports = {
+    port: 9000,
     logging : {
         level:"silly",
         disabled:false
