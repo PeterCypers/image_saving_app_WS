@@ -31,7 +31,14 @@ const saveFileToSystem = (fotoFile, userID, baseDir) => {
     const targetPath = path.join(userDirectory, originalName);
 
     // Move the file to the target path
-    fs.renameSync(tempFilePath, targetPath);
+    // fs.renameSync(tempFilePath, targetPath); //-> zorgt voor grove error bij online versie
+
+    // Copy the file to the target path
+    fs.copyFileSync(tempFilePath, targetPath);
+    // Delete the original file
+    fs.unlinkSync(tempFilePath);
+   
+   
 
     // getting the difference between 2 paths:(ter info)
     // const relativePath = path.relative(path.join(__dirname, '..', '..', 'public'), targetPath);
